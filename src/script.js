@@ -1,7 +1,6 @@
 import './style.css'
 // import './fbo.js'
 // import * as FBO from './fbo.js';
-console.log("here");
 import * as THREE from 'three'
 import {
   OrbitControls
@@ -23,6 +22,8 @@ const scene = new THREE.Scene()
 
 const texture = new THREE.TextureLoader().load('textures/gradient.png');
 console.log("here");
+
+var doubleBuffer;
 
 class ThreeDoubleBuffer {
   constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
@@ -47,7 +48,7 @@ class ThreeDoubleBuffer {
       depthBuffer: false,
       stencilBuffer: false,
     };
-  }
+  };
 
   getOptionsDataTexture() {
     return {
@@ -60,7 +61,7 @@ class ThreeDoubleBuffer {
       depthBuffer: false,
       stencilBuffer: false,
     };
-  }
+  };
 
   buildBuffers(isData) {
     // FBO scene & camera
@@ -87,43 +88,43 @@ class ThreeDoubleBuffer {
       map: this.bufferB
     })
     this.displayMesh = new THREE.Mesh(this.planeGeom, finalMaterial);
-  }
+  };
 
   setUniform(key, val) {
     this.bufferMaterial.uniforms[key].value = val;
-  }
+  };
 
   getUniform(key) {
     return this.bufferMaterial.uniforms[key].value;
-  }
+  };
 
   getWidth() {
     return this.width;
-  }
+  };
 
   getHeight() {
     return this.height;
-  }
+  };
 
   getPlane() {
     return this.plane;
-  }
+  };
 
   getScene() {
     return this.bufferScene;
-  }
+  };
 
   getCamera() {
     return this.bufferCamera;
-  }
-
+  };
+  //
   getTexture() {
     return this.bufferB.texture;
-  }
+  };
 
   getTextureOld() {
     return this.bufferA.texture;
-  }
+  };
 
   render(renderer, debugRenderer = null) {
     // render!
@@ -150,7 +151,8 @@ class ThreeDoubleBuffer {
 }
 
 var simSize = 256;
-init() {
+
+function init() {
   // this.simSize = 256;
   // this.buildColorMapFbo();
   buildParticles();
@@ -158,7 +160,7 @@ init() {
   startAnimation();
 }
 
-buildDoubleBuffer() {
+function buildDoubleBuffer() {
   var offset = new THREE.Vector2(0, 0);
   let bufferMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -197,10 +199,10 @@ buildDoubleBuffer() {
     },
     fragmentShader: fboFragment
   });
-  var doubleBuffer = new ThreeDoubleBuffer(simSize, simSize, bufferMaterial, true);
+  doubleBuffer = new ThreeDoubleBuffer(simSize, simSize, bufferMaterial, true);
 
   // add double buffer plane to main THREE scene
-  scene.add(this.doubleBuffer.displayMesh);
+  scene.add(doubleBuffer.displayMesh);
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
   // add debug rednerer & add to DOM
@@ -216,89 +218,89 @@ buildDoubleBuffer() {
   // }
 }
 
-buildParticles() {
-  // build geometry for particles
-  // const buffGeom = new THREE.CircleBufferGeometry( 1, 8 );
-  const buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
-  let geometry = new THREE.InstancedBufferGeometry();
-  geometry.index = buffGeom.index;
-  geometry.attributes = buffGeom.attributes;
-
-  // create positions
-  const particleCount = this.simSize * this.simSize;
-  this.meshRadius = 200;
-  this.meshDepth = 400;
-
-  // create attributes arrays & assign to geometry
-  const translateArray = new Float32Array(particleCount * 3);
-  const colorUVArray = new Float32Array(particleCount * 2);
-  // spehere helpers
-  var inc = Math.PI * (3 - Math.sqrt(5));
-  var x = 0;
-  var y = 0;
-  var z = 0;
-  var r = 0;
-  var phi = 0;
-  var radius = 0.6;
-  for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
-    // random positions inside a unit cube
-    translateArray[i3 + 0] = Math.random() * 2 - 1;
-    translateArray[i3 + 1] = Math.random() * 2 - 1;
-    translateArray[i3 + 2] = Math.random() * 2 - 1;
-
-    // grid layout
-    translateArray[i3 + 0] = -1 + 2 * ((i % this.simSize) / this.simSize);
-    translateArray[i3 + 1] = -1 + 2 * (Math.floor(i / this.simSize) / this.simSize);
-    translateArray[i3 + 2] = 0.;
-
-    // evenly-spread positions on a unit sphere surface
-    // var off = 2 / particleCount;
-    // y = i * off - 1 + off / 2;
-    // r = Math.sqrt(1 - y * y);
-    // phi = i * inc;
-    // x = Math.cos(phi) * r;
-    // z = (0, Math.sin(phi) * r);
-    // x *= radius * Math.random(); // but vary the radius to not just be on the surface
-    // y *= radius * Math.random();
-    // z *= radius * Math.random();
-    // translateArray[ i3 + 0 ] = x;
-    // translateArray[ i3 + 1 ] = y;
-    // translateArray[ i3 + 2 ] = z;
-
-    // color map progress
-    colorUVArray[i2 + 0] = ((i % this.simSize) / this.simSize); // i/particleCount;
-    colorUVArray[i2 + 1] = (Math.floor(i / this.simSize) / this.simSize); // 0.5
-  }
-
-  geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(translateArray, 3));
-  geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(colorUVArray, 2));
-
-  this.particleMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      "map": {
-        value: new THREE.TextureLoader().load('../data/particle.png')
-      },
-      "colorMap": {
-        value: this.gradientFBO.getTexture()
-      },
-      "positionsMap": {
-        value: null
-      },
-      "time": {
-        value: 0.0
-      },
-    },
-    vertexShader: renderVertex,
-    fragmentShader: renderFragment,
-    depthWrite: false,
-    depthTest: true,
-    blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
-  });
-
-  this.mesh = new THREE.Mesh(geometry, this.particleMaterial);
-  this.mesh.scale.set(this.meshRadius, this.meshRadius, this.meshDepth);
-  this.scene.add(this.mesh);
-}
+// function buildParticles() {
+//   // build geometry for particles
+//   // const buffGeom = new THREE.CircleBufferGeometry( 1, 8 );
+//   const buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
+//   let geometry = new THREE.InstancedBufferGeometry();
+//   geometry.index = buffGeom.index;
+//   geometry.attributes = buffGeom.attributes;
+//
+//   // create positions
+//   const particleCount = this.simSize * this.simSize;
+//   var meshRadius = 200;
+//   var meshDepth = 400;
+//
+//   // create attributes arrays & assign to geometry
+//   const translateArray = new Float32Array(particleCount * 3);
+//   const colorUVArray = new Float32Array(particleCount * 2);
+//   // spehere helpers
+//   var inc = Math.PI * (3 - Math.sqrt(5));
+//   var x = 0;
+//   var y = 0;
+//   var z = 0;
+//   var r = 0;
+//   var phi = 0;
+//   var radius = 0.6;
+//   for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
+//     // random positions inside a unit cube
+//     translateArray[i3 + 0] = Math.random() * 2 - 1;
+//     translateArray[i3 + 1] = Math.random() * 2 - 1;
+//     translateArray[i3 + 2] = Math.random() * 2 - 1;
+//
+//     // grid layout
+//     translateArray[i3 + 0] = -1 + 2 * ((i % simSize) / simSize);
+//     translateArray[i3 + 1] = -1 + 2 * (Math.floor(i / simSize) / simSize);
+//     translateArray[i3 + 2] = 0.;
+//
+//     // evenly-spread positions on a unit sphere surface
+//     // var off = 2 / particleCount;
+//     // y = i * off - 1 + off / 2;
+//     // r = Math.sqrt(1 - y * y);
+//     // phi = i * inc;
+//     // x = Math.cos(phi) * r;
+//     // z = (0, Math.sin(phi) * r);
+//     // x *= radius * Math.random(); // but vary the radius to not just be on the surface
+//     // y *= radius * Math.random();
+//     // z *= radius * Math.random();
+//     // translateArray[ i3 + 0 ] = x;
+//     // translateArray[ i3 + 1 ] = y;
+//     // translateArray[ i3 + 2 ] = z;
+//
+//     // color map progress
+//     colorUVArray[i2 + 0] = ((i % simSize) / simSize); // i/particleCount;
+//     colorUVArray[i2 + 1] = (Math.floor(i / simSize) / simSize); // 0.5
+//   }
+//
+//   geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(translateArray, 3));
+//   geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(colorUVArray, 2));
+//
+//   var particleMaterial = new THREE.ShaderMaterial({
+//     uniforms: {
+//       "map": {
+//         value: new THREE.TextureLoader().load('textures/circle.png')
+//       },
+//       // "colorMap": {
+//       //   value: this.gradientFBO.getTexture()
+//       // },
+//       "positionsMap": {
+//         value: null
+//       },
+//       "time": {
+//         value: 0.0
+//       },
+//     },
+//     vertexShader: renderVertex,
+//     fragmentShader: renderFragment,
+//     depthWrite: false,
+//     depthTest: true,
+//     blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
+//   });
+//
+//   this.mesh = new THREE.Mesh(geometry, particleMaterial);
+//   this.mesh.scale.set(this.meshRadius, meshRadius, meshDepth);
+//   this.scene.add(this.mesh);
+// }
 
 
 
@@ -337,16 +339,16 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-updateSimulation() {
+function updateSimulation() {
   // update uniforms & re-render double buffer
   // for(let i=0; i < 5; i++) {
-  this.doubleBuffer.setUniform('time', _frameLoop.count(0.001));
+  doubleBuffer.setUniform('time', _frameLoop.count(0.001));
   // this.doubleBuffer.setUniform('rotation', _frameLoop.osc(0.03, -0.003, 0.003));
   // this.doubleBuffer.setUniform('zoom', _frameLoop.osc(0.02, 0.998, 1.004));
   // this.offset.x = _frameLoop.osc(0.01, -0.001, 0.001);
   // this.offset.y = 0.001;// _frameLoop.osc(0.01, -0.002, 0.002);
-  this.doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
-  this.doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
+  doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
+  doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
   // }
 }
 
@@ -354,14 +356,14 @@ updateSimulation() {
 
 /**
  * Animate
- */
+//  */
 const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
 
   //update material
-  material.uniforms.uTime.value = elapsedTime;
+  // material.uniforms.uTime.value = elapsedTime;
 
   // Update controls
   controls.update()
