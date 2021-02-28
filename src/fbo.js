@@ -1,74 +1,130 @@
-var FBO = function( exports ){
+import * as THREE from 'three'
 
-    var scene, orthoCamera, rtt;
-    exports.init = function( width, height, renderer, simulationMaterial, renderMaterial ){
+class ThreeDoubleBuffer {
 
-        gl = renderer.getContext();
-
-        //1 we need FLOAT Textures to store positions
-        //https://github.com/KhronosGroup/WebGL/blob/master/sdk/tests/conformance/extensions/oes-texture-float.html
-        if (!gl.getExtension("OES_texture_float")){
-            throw new Error( "float textures not supported" );
-        }
-
-        //2 we need to access textures from within the vertex shader
-        //https://github.com/KhronosGroup/WebGL/blob/90ceaac0c4546b1aad634a6a5c4d2dfae9f4d124/conformance-suites/1.0.0/extra/webgl-info.html
-        if( gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0 ) {
-            throw new Error( "vertex shader cannot read textures" );
-        }
-
-        //3 rtt setup
-        scene = new THREE.Scene();
-        orthoCamera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow( 2, 53 ),1);
-
-        //4 create a target texture
-        var options = {
-            minFilter: THREE.NearestFilter,//important as we want to sample square pixels
-            magFilter: THREE.NearestFilter,//
-            format: THREE.RGBFormat,//could be RGBAFormat
-            type:THREE.FloatType//important as we need precise coordinates (not ints)
-        };
-        rtt = new THREE.WebGLRenderTarget( width,height, options);
+  constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
+    this.width = width;
+    this.height = height;
+    this.bufferMaterial = bufferMaterial;
+    this.bgColor = bgColor;
+    this.transparent = transparent;
+    this.devicePixelRatio = window.devicePixelRatio || 1;
+    this.buildBuffers(isData);
+  }
 
 
-        //5 the simulation:
-        //create a bi-unit quadrilateral and uses the simulation material to update the Float Texture
-        var geom = new THREE.BufferGeometry();
-        geom.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([   -1,-1,0, 1,-1,0, 1,1,0, -1,-1, 0, 1, 1, 0, -1,1,0 ]), 3 ) );
-        geom.addAttribute( 'uv', new THREE.BufferAttribute( new Float32Array([   0,1, 1,1, 1,0,     0,1, 1,0, 0,0 ]), 2 ) );
-        scene.add( new THREE.Mesh( geom, simulationMaterial ) );
-
-
-        //6 the particles:
-        //create a vertex buffer of size width * height with normalized coordinates
-        var l = (width * height );
-        var vertices = new Float32Array( l * 3 );
-        for ( var i = 0; i < l; i++ ) {
-
-            var i3 = i * 3;
-            vertices[ i3 ] = ( i % width ) / width ;
-            vertices[ i3 + 1 ] = ( i / width ) / height;
-        }
-
-        //create the particles geometry
-        var geometry = new THREE.BufferGeometry();
-        geometry.addAttribute( 'position',  new THREE.BufferAttribute( vertices, 3 ) );
-
-        //the rendermaterial is used to render the particles
-        exports.particles = new THREE.Points( geometry, renderMaterial );
-        exports.renderer = renderer;
-
+  getOptions() {
+    return {
+      format: THREE.RGBAFormat,
+      wrapS: THREE.RepeatWrapping,
+      wrapT: THREE.RepeatWrapping,
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      // type: THREE.UnsignedByteType,
+      type: THREE.HalfFloatType,
+      depthBuffer: false,
+      stencilBuffer: false,
     };
+  }
 
-    //7 update loop
-    exports.update = function(){
-
-        //1 update the simulation and render the result in a target texture
-        exports.renderer.render( scene, orthoCamera, rtt, true );
-
-        //2 use the result of the swap as the new position for the particles' renderer
-        exports.particles.material.uniforms.positions.value = rtt;
-
+  getOptionsDataTexture() {
+    return {
+      format: THREE.RGBAFormat,
+      wrapS: THREE.ClampToEdgeWrapping,
+      wrapT: THREE.ClampToEdgeWrapping,
+      minFilter: THREE.NearestFilter,
+      magFilter: THREE.NearestFilter,
+      type: THREE.HalfFloatType,
+      depthBuffer: false,
+      stencilBuffer: false,
     };
-    return exports;
-}({});
+  }
+
+  buildBuffers(isData) {
+    // FBO scene & camera
+    this.bufferScene = new THREE.Scene();
+    this.bufferCamera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 1);
+
+    // build render targets
+    let options = (isData) ? this.getOptionsDataTexture() : this.getOptions();
+    this.bufferA = new THREE.WebGLRenderTarget(this.width, this.height, options);
+    this.bufferB = new THREE.WebGLRenderTarget(this.width, this.height, options);
+
+    // camera-filling plane
+    this.planeGeom = new THREE.PlaneBufferGeometry(this.width, this.height, 1);
+    this.plane = new THREE.Mesh(
+      this.planeGeom,
+      this.bufferMaterial
+    );
+    this.plane.position.set(0, 0, 0);
+    this.bufferScene.add(this.plane);
+
+    // add mesh to show on screen if we'd like.
+    // this would get attached outside of this object
+    let finalMaterial = new THREE.MeshBasicMaterial({
+      map: this.bufferB
+    })
+    this.displayMesh = new THREE.Mesh(this.planeGeom, finalMaterial);
+  }
+
+  setUniform(key, val) {
+    this.bufferMaterial.uniforms[key].value = val;
+  }
+
+  getUniform(key) {
+    return this.bufferMaterial.uniforms[key].value;
+  }
+
+  getWidth() {
+    return this.width;
+  }
+
+  getHeight() {
+    return this.height;
+  }
+
+  getPlane() {
+    return this.plane;
+  }
+
+  getScene() {
+    return this.bufferScene;
+  }
+
+  getCamera() {
+    return this.bufferCamera;
+  }
+
+  getTexture() {
+    return this.bufferB.texture;
+  }
+
+  getTextureOld() {
+    return this.bufferA.texture;
+  }
+
+  render(renderer, debugRenderer = null) {
+    // render!
+    renderer.setRenderTarget(this.bufferB);
+    renderer.render(this.bufferScene, this.bufferCamera);
+    renderer.setRenderTarget(null);
+
+    // render in time if we pass one in
+    // this isn't working...
+    if (debugRenderer) {
+      debugRenderer.render(this.bufferScene, this.bufferCamera);
+    }
+
+    // ping pong buffers
+    var temp = this.bufferA;
+    this.bufferA = this.bufferB;
+    this.bufferB = temp;
+
+    // swap materials in simulation scene and in display mesh
+    this.bufferMaterial.uniforms.lastFrame.value = this.bufferA.texture;
+    this.displayMesh.material.map = this.bufferB.texture;
+  }
+
+}
+
+export default ThreeDoubleBuffer;

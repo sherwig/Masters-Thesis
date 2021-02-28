@@ -1,83 +1,68 @@
-uniform sampler2D positions;//DATA Texture containing original positions
-uniform sampler2D positionsOld;
-uniform sampler2D textureA;
-uniform sampler2D textureB;
-uniform float uTime;
-uniform vec3 uTexture1Elevation;
-uniform vec3 uTexture2Elevation;
-uniform float uMult;
+uniform vec2 res;
+uniform sampler2D lastFrame;
+uniform sampler2D imgTex;
+uniform float time;
+uniform float zoom;
+uniform float rotation;
+uniform float mixOriginal;
+uniform vec2 offset;
+// Simplex 2D noise
+//
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+          -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
 
-varying vec2 vUv;
-// varying float vElevation;
 void main() {
+  vec2 texel = 1. / res;
+  // get orig color
+  vec2 vUvOrig = gl_FragCoord.xy / res;
+  vec4 imgColor = texture2D(imgTex, vUvOrig);
+  // apply zoom & rotate displacement
+  vec2 vUv = gl_FragCoord.xy / res;
+  vUv -= 0.5; // center coords
+  vUv *= zoom;
+  vUv *= mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
+  vUv += 0.5; // reset from centering
+  vec4 lastFrameZoomed = texture2D(lastFrame, vUv + offset);
+  // mix soomed with original
+  vec4 finalColor = mix(lastFrameZoomed, imgColor, mixOriginal);
+  finalColor = lastFrameZoomed; // override mix with test pattern
 
-    //basic simulation: displays the particles in place.
-    vec4 pos = texture2D( positions, vUv ).rgba;
-    vec4 posOld = texture2D( positionsOld, vUv ).rgba;
-
-    if(pos.a==1.0)
-    {
-      pos.a=sin(vUv.x*6.0);
-    }
-    // pos.y+=sin(pos.a*5.0+uTime)*.3;
-    // pos.x+=sin(pos.a*4.0+uTime)*.3;
-    // pos.z+=cos(pos.a*3.0+uTime)*.3;
-
-    pos.y+=sin(pos.a*5.0)*.3;
-    pos.x+=sin(pos.a*4.0)*.3;
-    pos.z+=cos(pos.a*3.0)*.3;
-
-
-    // if(pos.a==1.0)
-    // {
-    //   posOld.a=sin(vUv.x*6.0);
-    // }
-    // posOld.y+=sin(posOld.a*2.0+uTime)*.3;
-    // posOld.x+=sin(posOld.a*4.0+uTime)*.3;
-    // posOld.z+=cos(posOld.a*1.0+uTime)*.3;
-
-    posOld.y+=sin(posOld.a*2.0)*.3;
-    posOld.x+=sin(posOld.a*4.0)*.3;
-    posOld.z+=cos(posOld.a*1.0)*.3;
-
-
-    // vElevation+=pos.y;
-
-    vec4 speed = texture2D( textureA, vUv).rgba;
-
-    if(posOld.a==1.0)
-    {
-      speed.a=cos(vUv.y*3.0);
-    }
-
-    // speed.y+=cos(speed.a*4.0+uTime)*.3;
-    // speed.x+=sin(speed.a*6.0+uTime)*.3;
-    // speed.z+=cos(speed.a*6.0+uTime)*.3;
-
-    speed.y+=cos(speed.a*4.0)*.3;
-    speed.x+=sin(speed.a*6.0)*.3;
-    speed.z+=cos(speed.a*6.0)*.3;
-
-    vec4 elevation = texture2D( textureB, vUv).rgba;
-    if(speed.a==1.0)
-    {
-      elevation.a=cos(vUv.y*3.0)*.3;
-    }
-
-    // elevation.z+=cos(elevation.a*4.0+uTime)*.3;
-
-    elevation.z+=cos(elevation.a*4.0)*.3;
-
-
-    vec4 finalColor = mix( pos, elevation, sin(uTime*0.3) );
-    // finalColor = mix (finalColor, elevation, cos(uTime*0.3));
-    // finalColor = mix (finalColor, posOld, sin(uTime*0.3));
-
-
-    // pos+=posOld+0.1;
-    // pos += posOld * 0.001;
-    // gl_FragColor = pos;
-    gl_FragColor = finalColor;
-    // vec4 colorizer = mix(pos,posOld,sin(uTime));
-
+  // add color & loop
+  float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(time * 2.)));
+  finalColor.r += 0.001 + noiseVal * 0.012;
+  finalColor.g += 0.001 + noiseVal * 0.008;
+  finalColor.b += 0.001 + noiseVal * 0.0016;
+  if(finalColor.r > 1.) finalColor.r = 0.;
+  if(finalColor.g > 1.) finalColor.g = 0.;
+  if(finalColor.b > 1.) finalColor.b = 0.;
+  if(finalColor.r < 0.) finalColor.r = 1.;
+  if(finalColor.g < 0.) finalColor.g = 1.;
+  if(finalColor.b < 0.) finalColor.b = 1.;
+  // set final color
+  gl_FragColor = finalColor;
 }

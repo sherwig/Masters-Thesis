@@ -1,7 +1,10 @@
-varying vec2 vUv;
-void main() {
+precision highp float;
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    // vUv = vec2(uv.x, uv.y);
-    vUv = uv;
-}
+ varying vec2 vUv;
+ varying vec3 vPos;
+
+ void main() {
+   vUv = uv;
+   vPos = position;
+   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
+ }
