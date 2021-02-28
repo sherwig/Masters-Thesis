@@ -326,7 +326,8 @@ window.addEventListener('resize', () => {
 })
 
 
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000)
+camera.position.set(0, 0, 400);
 // camera.position.x = 3
 // camera.position.y = 3
 // camera.position.z = 3
@@ -355,6 +356,8 @@ function updateSimulation() {
   // this.offset.y = 0.001;// _frameLoop.osc(0.01, -0.002, 0.002);
   doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
   doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
+
+
   // }
 }
 
@@ -363,19 +366,19 @@ function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
   particleMaterial.uniforms["time"].value = time;
-  particleMaterial.uniforms["positionsMap"].value = this.doubleBuffer.getTexture();
-  gradientMaterial.uniforms["time"].value = time;
+  particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
+  // gradientMaterial.uniforms["time"].value = time;
 
   // rotate shape
   const cameraAmp = 2;
-  if (!this.cameraXEase) { // lazy init rotation lerping
-    cameraXEase = new EasingFloat(0, 0.08, 0.00001);
-    cameraYEase = new EasingFloat(0, 0.08, 0.00001);
-  }
-  cameraYEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.xNorm(this.el)).update();
-  cameraXEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.yNorm(this.el)).update();
-  mesh.rotation.x = this.cameraXEase.value();
-  mesh.rotation.y = this.cameraYEase.value();
+  // if (!this.cameraXEase) { // lazy init rotation lerping
+  //   cameraXEase = new EasingFloat(0, 0.08, 0.00001);
+  //   cameraYEase = new EasingFloat(0, 0.08, 0.00001);
+  // }
+  // cameraYEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.xNorm(this.el)).update();
+  // cameraXEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.yNorm(this.el)).update();
+  // mesh.rotation.x = this.cameraXEase.value();
+  // mesh.rotation.y = this.cameraYEase.value();
 
   // move camera z
   // this.mesh.position.set(0, 0, 0 + 200 * Math.sin(time*2));
@@ -398,7 +401,14 @@ const tick = () => {
   controls.update()
 
   updateObjects();
-  updateSimulation();
+
+  doubleBuffer.setUniform('time', elapsedTime);
+  doubleBuffer.setUniform('mixOriginal', 0.02);
+  doubleBuffer.render(renderer);
+
+  // updateSimulation();
+
+
 
   // Render
   renderer.render(scene, camera)
@@ -407,3 +417,5 @@ const tick = () => {
 }
 
 init();
+
+tick();
