@@ -21,7 +21,6 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 const texture = new THREE.TextureLoader().load('textures/gradient.png');
-console.log("here");
 
 var doubleBuffer;
 
@@ -156,8 +155,8 @@ function init() {
   // this.simSize = 256;
   // this.buildColorMapFbo();
   buildParticles();
-  // buildDoubleBuffer();
-  startAnimation();
+  buildDoubleBuffer();
+  // startAnimation();
 }
 
 function buildDoubleBuffer() {
@@ -218,91 +217,98 @@ function buildDoubleBuffer() {
   // }
 }
 
-// function buildParticles() {
-//   // build geometry for particles
-//   // const buffGeom = new THREE.CircleBufferGeometry( 1, 8 );
-//   const buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
-//   let geometry = new THREE.InstancedBufferGeometry();
-//   geometry.index = buffGeom.index;
-//   geometry.attributes = buffGeom.attributes;
-//
-//   // create positions
-//   const particleCount = this.simSize * this.simSize;
-//   var meshRadius = 200;
-//   var meshDepth = 400;
-//
-//   // create attributes arrays & assign to geometry
-//   const translateArray = new Float32Array(particleCount * 3);
-//   const colorUVArray = new Float32Array(particleCount * 2);
-//   // spehere helpers
-//   var inc = Math.PI * (3 - Math.sqrt(5));
-//   var x = 0;
-//   var y = 0;
-//   var z = 0;
-//   var r = 0;
-//   var phi = 0;
-//   var radius = 0.6;
-//   for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
-//     // random positions inside a unit cube
-//     translateArray[i3 + 0] = Math.random() * 2 - 1;
-//     translateArray[i3 + 1] = Math.random() * 2 - 1;
-//     translateArray[i3 + 2] = Math.random() * 2 - 1;
-//
-//     // grid layout
-//     translateArray[i3 + 0] = -1 + 2 * ((i % simSize) / simSize);
-//     translateArray[i3 + 1] = -1 + 2 * (Math.floor(i / simSize) / simSize);
-//     translateArray[i3 + 2] = 0.;
-//
-//     // evenly-spread positions on a unit sphere surface
-//     // var off = 2 / particleCount;
-//     // y = i * off - 1 + off / 2;
-//     // r = Math.sqrt(1 - y * y);
-//     // phi = i * inc;
-//     // x = Math.cos(phi) * r;
-//     // z = (0, Math.sin(phi) * r);
-//     // x *= radius * Math.random(); // but vary the radius to not just be on the surface
-//     // y *= radius * Math.random();
-//     // z *= radius * Math.random();
-//     // translateArray[ i3 + 0 ] = x;
-//     // translateArray[ i3 + 1 ] = y;
-//     // translateArray[ i3 + 2 ] = z;
-//
-//     // color map progress
-//     colorUVArray[i2 + 0] = ((i % simSize) / simSize); // i/particleCount;
-//     colorUVArray[i2 + 1] = (Math.floor(i / simSize) / simSize); // 0.5
-//   }
-//
-//   geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(translateArray, 3));
-//   geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(colorUVArray, 2));
-//
-//   var particleMaterial = new THREE.ShaderMaterial({
-//     uniforms: {
-//       "map": {
-//         value: new THREE.TextureLoader().load('textures/circle.png')
-//       },
-//       // "colorMap": {
-//       //   value: this.gradientFBO.getTexture()
-//       // },
-//       "positionsMap": {
-//         value: null
-//       },
-//       "time": {
-//         value: 0.0
-//       },
-//     },
-//     vertexShader: renderVertex,
-//     fragmentShader: renderFragment,
-//     depthWrite: false,
-//     depthTest: true,
-//     blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
-//   });
-//
-//   this.mesh = new THREE.Mesh(geometry, particleMaterial);
-//   this.mesh.scale.set(this.meshRadius, meshRadius, meshDepth);
-//   this.scene.add(this.mesh);
-// }
+var mesh;
+var particleMaterial;
+
+function buildParticles() {
+  // build geometry for particles
+  // const buffGeom = new THREE.CircleBufferGeometry( 1, 8 );
+  const buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
+  let geometry = new THREE.InstancedBufferGeometry();
+  geometry.index = buffGeom.index;
+  geometry.attributes = buffGeom.attributes;
+
+  // create positions
+  const particleCount = simSize * simSize;
+  var meshRadius = 200;
+  var meshDepth = 400;
+
+  // create attributes arrays & assign to geometry
+  const translateArray = new Float32Array(particleCount * 3);
+  const colorUVArray = new Float32Array(particleCount * 2);
+  // spehere helpers
+  var inc = Math.PI * (3 - Math.sqrt(5));
+  var x = 0;
+  var y = 0;
+  var z = 0;
+  var r = 0;
+  var phi = 0;
+  var radius = 0.6;
+  for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
+    // random positions inside a unit cube
+    translateArray[i3 + 0] = Math.random() * 2 - 1;
+    translateArray[i3 + 1] = Math.random() * 2 - 1;
+    translateArray[i3 + 2] = Math.random() * 2 - 1;
+
+    // grid layout
+    translateArray[i3 + 0] = -1 + 2 * ((i % simSize) / simSize);
+    translateArray[i3 + 1] = -1 + 2 * (Math.floor(i / simSize) / simSize);
+    translateArray[i3 + 2] = 0.;
+
+    // evenly-spread positions on a unit sphere surface
+    // var off = 2 / particleCount;
+    // y = i * off - 1 + off / 2;
+    // r = Math.sqrt(1 - y * y);
+    // phi = i * inc;
+    // x = Math.cos(phi) * r;
+    // z = (0, Math.sin(phi) * r);
+    // x *= radius * Math.random(); // but vary the radius to not just be on the surface
+    // y *= radius * Math.random();
+    // z *= radius * Math.random();
+    // translateArray[ i3 + 0 ] = x;
+    // translateArray[ i3 + 1 ] = y;
+    // translateArray[ i3 + 2 ] = z;
+
+    // color map progress
+    colorUVArray[i2 + 0] = ((i % simSize) / simSize); // i/particleCount;
+    colorUVArray[i2 + 1] = (Math.floor(i / simSize) / simSize); // 0.5
+  }
+
+  geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(translateArray, 3));
+  geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(colorUVArray, 2));
+
+  particleMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      "map": {
+        value: new THREE.TextureLoader().load('textures/circle.png')
+      },
+      "colorMap": {
+        value: new THREE.TextureLoader().load(gradientImage)
+      },
+      "positionsMap": {
+        value: null
+      },
+      "time": {
+        value: 0.0
+      },
+    },
+    vertexShader: renderVertex,
+    fragmentShader: renderFragment,
+    depthWrite: false,
+    depthTest: true,
+    blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
+  });
+
+  mesh = new THREE.Mesh(geometry, particleMaterial);
+  mesh.scale.set(meshRadius, meshRadius, meshDepth);
+  scene.add(mesh);
+}
 
 
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight
+}
 
 
 window.addEventListener('resize', () => {
@@ -321,9 +327,9 @@ window.addEventListener('resize', () => {
 
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 3
-camera.position.y = 3
-camera.position.z = 3
+// camera.position.x = 3
+// camera.position.y = 3
+// camera.position.z = 3
 scene.add(camera)
 
 // Controls
@@ -353,6 +359,29 @@ function updateSimulation() {
 }
 
 
+function updateObjects() {
+  // update shader
+  const time = performance.now() * 0.0001;
+  particleMaterial.uniforms["time"].value = time;
+  particleMaterial.uniforms["positionsMap"].value = this.doubleBuffer.getTexture();
+  gradientMaterial.uniforms["time"].value = time;
+
+  // rotate shape
+  const cameraAmp = 2;
+  if (!this.cameraXEase) { // lazy init rotation lerping
+    cameraXEase = new EasingFloat(0, 0.08, 0.00001);
+    cameraYEase = new EasingFloat(0, 0.08, 0.00001);
+  }
+  cameraYEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.xNorm(this.el)).update();
+  cameraXEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.yNorm(this.el)).update();
+  mesh.rotation.x = this.cameraXEase.value();
+  mesh.rotation.y = this.cameraYEase.value();
+
+  // move camera z
+  // this.mesh.position.set(0, 0, 0 + 200 * Math.sin(time*2));
+}
+
+
 
 /**
  * Animate
@@ -367,6 +396,9 @@ const tick = () => {
 
   // Update controls
   controls.update()
+
+  updateObjects();
+  updateSimulation();
 
   // Render
   renderer.render(scene, camera)
