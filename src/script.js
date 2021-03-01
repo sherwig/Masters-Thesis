@@ -204,6 +204,7 @@ function buildDoubleBuffer() {
   scene.add(doubleBuffer.displayMesh);
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
+
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({
@@ -299,8 +300,11 @@ function buildParticles() {
     blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
   });
 
+
+
   mesh = new THREE.Mesh(geometry, particleMaterial);
   mesh.scale.set(meshRadius, meshRadius, meshDepth);
+  // console.log(mesh);
   scene.add(mesh);
 }
 
@@ -327,15 +331,24 @@ window.addEventListener('resize', () => {
 
 
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000)
-camera.position.set(0, 0, 400);
+
 // camera.position.x = 3
 // camera.position.y = 3
 // camera.position.z = 3
 scene.add(camera)
+camera.position.set(0, 0, 10);
+camera.lookAt(scene.position);
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00
+});
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
 /**
  * Renderer
@@ -346,20 +359,20 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-function updateSimulation() {
-  // update uniforms & re-render double buffer
-  // for(let i=0; i < 5; i++) {
-  doubleBuffer.setUniform('time', _frameLoop.count(0.001));
-  // this.doubleBuffer.setUniform('rotation', _frameLoop.osc(0.03, -0.003, 0.003));
-  // this.doubleBuffer.setUniform('zoom', _frameLoop.osc(0.02, 0.998, 1.004));
-  // this.offset.x = _frameLoop.osc(0.01, -0.001, 0.001);
-  // this.offset.y = 0.001;// _frameLoop.osc(0.01, -0.002, 0.002);
-  doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
-  doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
-
-
-  // }
-}
+// function updateSimulation() {
+//   // update uniforms & re-render double buffer
+//   // for(let i=0; i < 5; i++) {
+//   doubleBuffer.setUniform('time', _frameLoop.count(0.001));
+//   // this.doubleBuffer.setUniform('rotation', _frameLoop.osc(0.03, -0.003, 0.003));
+//   // this.doubleBuffer.setUniform('zoom', _frameLoop.osc(0.02, 0.998, 1.004));
+//   // this.offset.x = _frameLoop.osc(0.01, -0.001, 0.001);
+//   // this.offset.y = 0.001;// _frameLoop.osc(0.01, -0.002, 0.002);
+//   doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
+//   doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
+//
+//
+//   // }
+// }
 
 
 function updateObjects() {
