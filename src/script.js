@@ -331,24 +331,13 @@ window.addEventListener('resize', () => {
 
 
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000)
-
-// camera.position.x = 3
-// camera.position.y = 3
-// camera.position.z = 3
 scene.add(camera)
-camera.position.set(0, 0, 10);
-camera.lookAt(scene.position);
+camera.position.set(0, 0, 400);
+// camera.lookAt(scene.position);
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00
-});
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
 
 /**
  * Renderer
@@ -421,12 +410,11 @@ const tick = () => {
 
   // updateSimulation();
 
-
-
   // Render
   renderer.render(scene, camera)
 
   // Call tick again on the next frame
+  window.requestAnimationFrame(tick)
 }
 
 init();
