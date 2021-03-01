@@ -395,6 +395,7 @@ const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
+  const time = performance.now() * 0.0001;
 
   //update material
   // material.uniforms.uTime.value = elapsedTime;
@@ -404,7 +405,7 @@ const tick = () => {
 
   updateObjects();
 
-  doubleBuffer.setUniform('time', elapsedTime);
+  doubleBuffer.setUniform('time', time);
   doubleBuffer.setUniform('mixOriginal', 0.02);
   doubleBuffer.render(renderer);
 
