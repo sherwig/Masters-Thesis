@@ -173,15 +173,23 @@ function buildDoubleBuffer() {
       },
       imgTex: {
         type: "t",
-        value: new THREE.TextureLoader().load('textures/gradient.png')
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
       },
       res: {
         type: "v2",
         value: new THREE.Vector2(simSize, simSize)
       },
-      time: {
+      speedTex: {
+        type: "t",
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
+      },
+      uTime: {
         type: "f",
         value: 0
+      },
+      speed: {
+        type: "f",
+        value: 0.001
       }
     },
     fragmentShader: fboFragment
@@ -193,6 +201,7 @@ function buildDoubleBuffer() {
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
 
+  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({
@@ -277,8 +286,20 @@ function buildParticles() {
       "positionsMap": {
         value: null
       },
-      "time": {
+      "uTime": {
         value: 0.0
+      },
+      "fullScale": {
+        value: 2.0
+      },
+      "xScale": {
+        value: 0.5
+      },
+      "yScale": {
+        value: 0.5
+      },
+      "zScale": {
+        value: 0.5
       },
     },
     vertexShader: renderVertex,
@@ -288,6 +309,10 @@ function buildParticles() {
     blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
   });
 
+  gui.add(particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
+  gui.add(particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
+  gui.add(particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
+  gui.add(particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
 
 
   mesh = new THREE.Mesh(geometry, particleMaterial);
@@ -355,7 +380,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
-  particleMaterial.uniforms["time"].value = time;
+  particleMaterial.uniforms["uTime"].value = time;
   particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
   // gradientMaterial.uniforms["time"].value = time;
 
@@ -393,7 +418,7 @@ const tick = () => {
 
   updateObjects();
 
-  doubleBuffer.setUniform('time', time);
+  doubleBuffer.setUniform('uTime', time);
   // doubleBuffer.setUniform('mixOriginal', 0.02);
   doubleBuffer.render(renderer);
 
