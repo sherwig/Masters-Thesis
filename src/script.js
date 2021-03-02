@@ -13,6 +13,7 @@ import renderFragment from './shaders/render/fragment.glsl'
 import renderVertex from './shaders/render/vertex.glsl'
 import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
+// import colorImage from '../static/textures/color.jpeg'
 
 const gui = new dat.GUI()
 // Canvas
@@ -40,6 +41,7 @@ class ThreeDoubleBuffer {
       format: THREE.RGBAFormat,
       wrapS: THREE.RepeatWrapping,
       wrapT: THREE.RepeatWrapping,
+      //AntiAliasing between near pixels LieanerFilter is default
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       // type: THREE.UnsignedByteType,
@@ -54,6 +56,7 @@ class ThreeDoubleBuffer {
       format: THREE.RGBAFormat,
       wrapS: THREE.ClampToEdgeWrapping,
       wrapT: THREE.ClampToEdgeWrapping,
+      //Nearest Neighbor for how they will interact with eachother
       minFilter: THREE.NearestFilter,
       magFilter: THREE.NearestFilter,
       type: THREE.HalfFloatType,
@@ -69,6 +72,7 @@ class ThreeDoubleBuffer {
 
     // build render targets
     let options = (isData) ? this.getOptionsDataTexture() : this.getOptions();
+    //Need two render targets because you can't read an write at the same time
     this.bufferA = new THREE.WebGLRenderTarget(this.width, this.height, options);
     this.bufferB = new THREE.WebGLRenderTarget(this.width, this.height, options);
 
@@ -178,23 +182,7 @@ function buildDoubleBuffer() {
       time: {
         type: "f",
         value: 0
-      },
-      zoom: {
-        type: "f",
-        value: 1
-      },
-      rotation: {
-        type: "f",
-        value: 0
-      },
-      mixOriginal: {
-        type: "f",
-        value: 0.1
-      },
-      offset: {
-        type: "v2",
-        value: offset
-      },
+      }
     },
     fragmentShader: fboFragment
   });
@@ -247,9 +235,9 @@ function buildParticles() {
   var radius = 0.6;
   for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
     // random positions inside a unit cube
-    translateArray[i3 + 0] = Math.random() * 2 - 1;
-    translateArray[i3 + 1] = Math.random() * 2 - 1;
-    translateArray[i3 + 2] = Math.random() * 2 - 1;
+    // translateArray[i3 + 0] = Math.random() * 2 - 1;
+    // translateArray[i3 + 1] = Math.random() * 2 - 1;
+    // translateArray[i3 + 2] = Math.random() * 2 - 1;
 
     // grid layout
     translateArray[i3 + 0] = -1 + 2 * ((i % simSize) / simSize);
@@ -406,11 +394,10 @@ const tick = () => {
   updateObjects();
 
   doubleBuffer.setUniform('time', time);
-  doubleBuffer.setUniform('mixOriginal', 0.02);
+  // doubleBuffer.setUniform('mixOriginal', 0.02);
   doubleBuffer.render(renderer);
 
   // updateSimulation();
-
   // Render
   renderer.render(scene, camera)
 

@@ -2,10 +2,7 @@ uniform vec2 res;
 uniform sampler2D lastFrame;
 uniform sampler2D imgTex;
 uniform float time;
-uniform float zoom;
-uniform float rotation;
-uniform float mixOriginal;
-uniform vec2 offset;
+#define PI 3.1415926538
 // Simplex 2D noise
 //
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -38,24 +35,33 @@ float snoise(vec2 v){
 
 void main() {
   vec2 texel = 1. / res;
-  // get orig color
+  // get orig color and normanlized numbers
   vec2 vUvOrig = gl_FragCoord.xy / res;
   vec4 imgColor = texture2D(imgTex, vUvOrig);
   // apply zoom & rotate displacement
   vec2 vUv = gl_FragCoord.xy / res;
-  vUv -= 0.5; // center coords
-  vUv *= zoom;
-  vUv *= mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
-  vUv += 0.5; // reset from centering
-  vec4 lastFrameZoomed = texture2D(lastFrame, vUv + offset);
+
+  vec4 lastFrame = texture2D(lastFrame, vUv);
   // mix soomed with original
-  vec4 finalColor = mix(lastFrameZoomed, imgColor, mixOriginal);
-  finalColor = lastFrameZoomed; // override mix with test pattern
+  // vec4 finalColor = mix(lastFrame, imgColor, mixOriginal);
+
+  vec4 finalColor = lastFrame; // override mix with test pattern
+
+  //instead of moving particles in a direction they should be turning
+  //Gonna need a second double
+  //a heading and a rotation
 
   // add color & loop
-  float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(time * 2.)));
-  finalColor.r += 0.001 + noiseVal * 0.012;
-  finalColor.g += 0.001 + noiseVal * 0.008;
+  // float noiseVal = snoise(vUvOrig);
+  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
+  float heading = noiseVal * 2.0*PI;
+  float speed =0.001;
+  noiseVal+= -0.5;
+  finalColor.r += cos(heading)* speed;
+  finalColor.g += sin(heading)* speed;
+
+  // finalColor.r += 0.001 + noiseVal * 0.012;
+  // finalColor.g += 0.001 + noiseVal * 0.008;
   finalColor.b += 0.001 + noiseVal * 0.0016;
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;
