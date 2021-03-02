@@ -2,7 +2,6 @@ uniform vec2 res;
 uniform sampler2D lastFrame;
 uniform sampler2D imgTex;
 uniform sampler2D speedTex;
-uniform sampler2D speedMap;
 uniform float uTime;
 uniform float speed;
 #define PI 3.1415926538
@@ -48,38 +47,37 @@ void main() {
   // mix soomed with original
   // vec4 finalColor = mix(lastFrame, imgColor, mixOriginal);
 
+  // vec4 speeder = texture2D(speedTex, vUv);
+
   vec4 finalColor = lastFrame; // override mix with test pattern
 
   //instead of moving particles in a direction they should be turning
   //Gonna need a second double
   //a heading and a rotation
 
-  vec4 speedster = texture2D(speedMap, vUv);
+  // float noiseVal2 = snoise(vec2(finalColor.x+speeder.x,finalColor.y+speeder.y ));
+
 
   // add color & loop
   // float noiseVal = snoise(vUvOrig);
-  float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
-  // float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
+  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
   float heading = noiseVal * 2.0 * PI;
   // float speed =0.001;
-  // noiseVal+= -0.5;
-  // finalColor.r += cos(heading) * speed;
-  // finalColor.g += sin(heading) * speed;
+  noiseVal+= -0.5;
+  finalColor.r += cos(heading) * speed;
+  finalColor.g += sin(heading) * speed;
   // finalColor.b += sin(heading) * speed;
-  finalColor.r += 0.001 + noiseVal * 0.012;
-  finalColor.g += 0.001 + noiseVal * 0.008;
-  finalColor.b += 0.001 + noiseVal * 0.0016;
 
-  finalColor.r += speedster.x*0.01;
-  finalColor.g += speedster.y*0.01;
-
-
-  if(finalColor.r > 1.) finalColor.r = 0.;
-  if(finalColor.g > 1.) finalColor.g = 0.;
-  if(finalColor.b > 1.) finalColor.b = 0.;
-  if(finalColor.r < 0.) finalColor.r = 1.;
-  if(finalColor.g < 0.) finalColor.g = 1.;
-  if(finalColor.b < 0.) finalColor.b = 1.;
+  // noiseVal2+= -0.5;
+  // finalColor.r += 0.001 + noiseVal * 0.012;
+  // finalColor.g += 0.001 + noiseVal * 0.008;
+  // finalColor.b += 0.001 + noiseVal * 0.0016;
+  // if(finalColor.r > 1.) finalColor.r = 0.;
+  // if(finalColor.g > 1.) finalColor.g = 0.;
+  // if(finalColor.b > 1.) finalColor.b = 0.;
+  // if(finalColor.r < 0.) finalColor.r = 1.;
+  // if(finalColor.g < 0.) finalColor.g = 1.;
+  // if(finalColor.b < 0.) finalColor.b = 1.;
   // set final color
   gl_FragColor = finalColor;
 }

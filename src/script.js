@@ -9,6 +9,7 @@ import {
 import * as dat from 'dat.gui'
 import fboFragment from './shaders/fbo/fragment.glsl'
 import fboVertex from './shaders/fbo/vertex.glsl'
+import fboSpeed from './shaders/fbo/speed_frag.glsl'
 import renderFragment from './shaders/render/fragment.glsl'
 import renderVertex from './shaders/render/vertex.glsl'
 import noiseImage from '../static/textures/noise.jpg'
@@ -23,7 +24,7 @@ const scene = new THREE.Scene()
 
 const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
-var doubleBuffer;
+var doubleBuffer, doubleSpeedBuffer;
 
 class ThreeDoubleBuffer {
   constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
@@ -153,13 +154,14 @@ class ThreeDoubleBuffer {
 
 }
 
-var simSize = 256;
+const simSize = 256;
 
 function init() {
   // this.simSize = 256;
   // this.buildColorMapFbo();
   buildParticles();
   buildDoubleBuffer();
+  bufferBuiltForSpeed();
   // startAnimation();
 }
 
@@ -190,6 +192,10 @@ function buildDoubleBuffer() {
       speed: {
         type: "f",
         value: 0.001
+      },
+      speedMap: {
+        type: "t",
+        value: null
       }
     },
     fragmentShader: fboFragment
@@ -199,6 +205,59 @@ function buildDoubleBuffer() {
   // add double buffer plane to main THREE scene
   scene.add(doubleBuffer.displayMesh);
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+
+
+  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
+  // add debug rednerer & add to DOM
+  // if (debugRender) {
+  //   debugRenderer = new THREE.WebGLRenderer({
+  //     antialias: false,
+  //     alpha: false
+  //   });
+  //   debugRenderer.setClearColor(0xff000000, 0);
+  //   debugRenderer.setPixelRatio(window.devicePixelRatio || 1);
+  //   debugRenderer.setSize(this.simSize, this.simSize);
+  //   debugEl.appendChild(this.debugRenderer.domElement);
+  // }
+}
+
+function bufferBuiltForSpeed() {
+  var offset = new THREE.Vector2(0, 0);
+  let bufferMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      lastFrame: {
+        type: "t",
+        value: null
+      },
+      imgTex: {
+        type: "t",
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
+      },
+      res: {
+        type: "v2",
+        value: new THREE.Vector2(simSize, simSize)
+      },
+      speedTex: {
+        type: "t",
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
+      },
+      uTime: {
+        type: "f",
+        value: 0
+      },
+      speed: {
+        type: "f",
+        value: 0.001
+      }
+    },
+    fragmentShader: fboSpeed
+  });
+  doubleSpeedBuffer = new ThreeDoubleBuffer(simSize, simSize, bufferMaterial, true);
+
+  // add double buffer plane to main THREE scene
+  scene.add(doubleSpeedBuffer.displayMesh);
+  doubleSpeedBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  doubleSpeedBuffer.displayMesh.position.set(60, 0, 0);
 
 
   gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
@@ -290,7 +349,7 @@ function buildParticles() {
         value: 0.0
       },
       "fullScale": {
-        value: 2.0
+        value: 1.2
       },
       "xScale": {
         value: 0.5
@@ -418,9 +477,15 @@ const tick = () => {
 
   updateObjects();
 
+  doubleSpeedBuffer.setUniform('uTime', time);
+  doubleSpeedBuffer.render(renderer);
+
   doubleBuffer.setUniform('uTime', time);
-  // doubleBuffer.setUniform('mixOriginal', 0.02);
+  doubleBuffer.setUniform("speedMap", doubleSpeedBuffer.getTexture());
+
   doubleBuffer.render(renderer);
+
+
 
   // updateSimulation();
   // Render
