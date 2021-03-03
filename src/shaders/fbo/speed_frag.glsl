@@ -60,22 +60,28 @@ void main() {
 
   // add color & loop
   // float noiseVal = snoise(vUvOrig);
-  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
-  float heading = noiseVal * 2.0 * PI;
+  // float noiseVal = snoise(vUvOrig);
+  // float heading = noiseVal * 2.0 * PI;
   // float speed =0.001;
-  noiseVal+= -0.5;
-  finalColor.r += cos(heading*uTime) * sin(heading)*speed;
-  finalColor.g += sin(heading*uTime) * sin(heading)*speed;
-  finalColor.b += sin(heading*uTime) * cos(heading)* speed*0.5;
+  // noiseVal+= -0.5;
+  // finalColor.r += snoise(vUvOrig);
+
+  float zoom = 10.;
+  finalColor.r += snoise(vUvOrig * zoom);
+
+  // finalColor.r+= heading;
+  // finalColor.r += cos(heading*uTime) * sin(heading)*speed;
+  // finalColor.g += sin(heading*uTime) * sin(heading)*speed;
+  // finalColor.b += sin(heading*uTime) * cos(heading)* speed*0.5;
 
   // noiseVal2+= -0.5;
   // finalColor.r += 0.001 + noiseVal * 0.012;
   // finalColor.g += 0.001 + noiseVal * 0.008;
   // finalColor.b += 0.001 + noiseVal * 0.0016;
-  // if(finalColor.r > 1.) finalColor.r = 0.;
+  if(finalColor.r > 1.) finalColor.r = 0.;
   // if(finalColor.g > 1.) finalColor.g = 0.;
   // if(finalColor.b > 1.) finalColor.b = 0.;
-  // if(finalColor.r < 0.) finalColor.r = 1.;
+  if(finalColor.r < 0.) finalColor.r = 1.;
   // if(finalColor.g < 0.) finalColor.g = 1.;
   // if(finalColor.b < 0.) finalColor.b = 1.;
   // set final color
