@@ -64,9 +64,9 @@ void main() {
   float heading = noiseVal * 2.0 * PI;
   // float speed =0.001;
   noiseVal+= -0.5;
-  finalColor.r += cos(heading) * speed;
-  finalColor.g += sin(heading) * speed;
-  // finalColor.b += sin(heading) * speed;
+  finalColor.r += cos(heading*uTime) * sin(heading)*speed;
+  finalColor.g += sin(heading*uTime) * sin(heading)*speed;
+  finalColor.b += sin(heading*uTime) * cos(heading)* speed*0.5;
 
   // noiseVal2+= -0.5;
   // finalColor.r += 0.001 + noiseVal * 0.012;

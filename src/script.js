@@ -260,7 +260,7 @@ function bufferBuiltForSpeed() {
   doubleSpeedBuffer.displayMesh.position.set(60, 0, 0);
 
 
-  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
+  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({

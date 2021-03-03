@@ -58,8 +58,8 @@ void main() {
 
   // add color & loop
   // float noiseVal = snoise(vUvOrig);
-  float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
-  // float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
+  // float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
+  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
   float heading = noiseVal * 2.0 * PI;
   // float speed =0.001;
   // noiseVal+= -0.5;
@@ -70,9 +70,9 @@ void main() {
   finalColor.g += 0.001 + noiseVal * 0.008;
   finalColor.b += 0.001 + noiseVal * 0.0016;
 
-  finalColor.r += speedster.x*0.01;
-  finalColor.g += speedster.y*0.01;
-
+  finalColor.r += speedster.x*speed;
+  finalColor.g += speedster.y*speed;
+  finalColor.b += speedster.z*speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;
