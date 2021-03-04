@@ -26,6 +26,10 @@ const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
 var doubleBuffer, doubleSpeedBuffer;
 
+const debugObject = {};
+debugObject.depthColor = '#186691';
+debugObject.surfaceColor = '#9bd8ff';
+
 class ThreeDoubleBuffer {
   constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
     this.width = width;
@@ -196,6 +200,10 @@ function buildDoubleBuffer() {
       speedMap: {
         type: "t",
         value: null
+      },
+      noiseAdder: {
+        type: "f",
+        value: new THREE.Vector3(0.001, 0.001, 0.001)
       }
     },
     fragmentShader: fboFragment
@@ -208,6 +216,9 @@ function buildDoubleBuffer() {
 
 
   gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
+  gui.add(bufferMaterial.uniforms.noiseAdder.value, 'x').min(0).max(0.05).step(0.0001).name('adderX');
+  gui.add(bufferMaterial.uniforms.noiseAdder.value, 'y').min(0).max(0.05).step(0.0001).name('adderY');
+  gui.add(bufferMaterial.uniforms.noiseAdder.value, 'z').min(0).max(0.05).step(0.0001).name('adderZ');
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({
@@ -360,6 +371,12 @@ function buildParticles() {
       "zScale": {
         value: 0.5
       },
+      uDepthColor: {
+        value: new THREE.Color(debugObject.depthColor)
+      },
+      uSurfaceColor: {
+        value: new THREE.Color(debugObject.surfaceColor)
+      },
     },
     vertexShader: renderVertex,
     fragmentShader: renderFragment,
@@ -373,9 +390,19 @@ function buildParticles() {
   gui.add(particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
   gui.add(particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
 
+  gui.addColor(debugObject, 'depthColor').name('depthColor').onChange(() => {
+    particleMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor)
+  });
+
+  gui.addColor(debugObject, 'surfaceColor').name('surfaceColor').onChange(() => {
+    particleMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor)
+  });
+
 
   mesh = new THREE.Mesh(geometry, particleMaterial);
   mesh.scale.set(meshRadius, meshRadius, meshDepth);
+  // mesh.rotatation.x = Math.PI;
+  mesh.rotation.x = Math.PI / 2;
   // console.log(mesh);
   scene.add(mesh);
 }

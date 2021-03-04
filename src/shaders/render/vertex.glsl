@@ -12,6 +12,7 @@ attribute vec2 colorUV;
 varying vec2 vUv;
 varying float vScale;
 varying vec2 vColorUV;
+varying float vElevation;
 
 float map(float value, float low1, float high1, float low2, float high2) {
    return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
@@ -30,8 +31,8 @@ void main() {
   // for correct inheritance of mesh position/rotation.
   // doing this afterwards was losing coordinate system rotation
 
-  // vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
-  vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
+  vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
+  // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
 
   // wrap offsets with a fade
@@ -49,4 +50,5 @@ void main() {
   vUv = uv;
   vColorUV = colorUV;
   vScale = scale;
+  vElevation = mapPosition.y;
 }

@@ -44,37 +44,11 @@ void main() {
   vec2 vUv = gl_FragCoord.xy / res;
 
   vec4 lastFrame = texture2D(lastFrame, vUv);
-  // mix soomed with original
-  // vec4 finalColor = mix(lastFrame, imgColor, mixOriginal);
-
-  // vec4 speeder = texture2D(speedTex, vUv);
 
   vec4 finalColor = lastFrame; // override mix with test pattern
-
-  //instead of moving particles in a direction they should be turning
-  //Gonna need a second double
-  //a heading and a rotation
-
-  // float noiseVal2 = snoise(vec2(finalColor.x+speeder.x,finalColor.y+speeder.y ));
-
-
-  // add color & loop
-  // float noiseVal = snoise(vUvOrig);
-  // float noiseVal = snoise(vUvOrig);
-  // float heading = noiseVal * 2.0 * PI;
-  // float speed =0.001;
-  // noiseVal+= -0.5;
-  // finalColor.r += snoise(vUvOrig);
-
-  float zoom = 10.;
+  float zoom = 10.0;
   finalColor.r += snoise(vUvOrig * zoom);
 
-  // finalColor.r+= heading;
-  // finalColor.r += cos(heading*uTime) * sin(heading)*speed;
-  // finalColor.g += sin(heading*uTime) * sin(heading)*speed;
-  // finalColor.b += sin(heading*uTime) * cos(heading)* speed*0.5;
-
-  // noiseVal2+= -0.5;
   // finalColor.r += 0.001 + noiseVal * 0.012;
   // finalColor.g += 0.001 + noiseVal * 0.008;
   // finalColor.b += 0.001 + noiseVal * 0.0016;
