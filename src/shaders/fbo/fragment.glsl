@@ -179,12 +179,8 @@ void main() {
 
   elevation+=  finalColor.g;
 
-  finalColor.r += cos(speedster.x)*heading*speed;
-  finalColor.g -= sin(speedster.y)*heading*speed;
-  finalColor.b += sin(speedster.z)*heading*speed;
-
-  // finalColor.r += cos(heading)*speedster.r*speed;
-  // finalColor.g += sin(heading)*speedster.r*speed;
+  finalColor.r += cos(heading)*speedster.r*speed;
+  finalColor.g += sin(heading)*speedster.r*speed;
 
   // finalColor.b += speedster.z*speed;
 
