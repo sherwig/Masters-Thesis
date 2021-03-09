@@ -275,8 +275,20 @@ function bufferBuiltForSpeed() {
       },
       vUvOffset: {
         type: "f",
-        value: 3.0
-      }
+        value: 1.0
+      },
+      uBigWavesElevation: {
+        type: "f",
+        value: .3
+      },
+      uBigWavesFrequency: {
+        type: "f",
+        value: new THREE.Vector2(4, 1.5)
+      },
+      uBigWavesSpeed: {
+        type: "f",
+        value: 0.75
+      },
     },
     fragmentShader: fboSpeed
   });
@@ -291,7 +303,12 @@ function bufferBuiltForSpeed() {
   gui.add(speedMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
   gui.add(speedMaterial.uniforms.zoom, 'value').min(0).max(100).step(1).name('noiseZoom');
   gui.add(speedMaterial.uniforms.zoomOut, 'value').min(0).max(.01).step(0.00001).name('zoomOut');
-  gui.add(speedMaterial.uniforms.vUvOffset, 'value').min(0).max(100).step(.1).name('vUvOffset');
+  gui.add(speedMaterial.uniforms.vUvOffset, 'value').min(0).max(5).step(.01).name('vUvOffset');
+  gui.add(speedMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
+  gui.add(speedMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX');
+  gui.add(speedMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY');
+  gui.add(speedMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(5).step(0.001).name('uBigWavesSpeed');
+
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({

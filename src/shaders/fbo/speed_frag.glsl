@@ -7,6 +7,9 @@ uniform float speed;
 uniform float zoom;
 uniform float zoomOut;
 uniform float vUvOffset;
+uniform float uBigWavesElevation;
+uniform vec2 uBigWavesFrequency;
+uniform float uBigWavesSpeed;
 uniform sampler2D positions;
 
 #define PI 3.1415926538
@@ -140,17 +143,23 @@ void main() {
 
   finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffset, uTime*0.15))*zoomOut;
 
-  // float elevation = sin(finalColor.x*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
-  // *sin(finalColor.z*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
+  float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
+  *sin(positionsMap.y+(vUvOrig.y*vUvOffset)*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
+  *uBigWavesElevation;
+
+  // float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
   // *uBigWavesElevation;
 
-  float elevation = sin(positionsMap.x+vUvOrig.x*20.0+uTime*0.002)
-  *sin(positionsMap.z+vUvOrig.y*20.0+uTime*0.0002)
-  *.6;
+  // float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
+  // *sin(positionsMap.z*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
+  // *uBigWavesElevation;
 
   for (float i=1.0; i<=3.0; i++)
   {
-      // elevation-=abs(cnoise(vec3(finalColor.xz*50.0*i,uTime*0.15))*0.0002/i);
+      // elevation-=abs(cnoise(vec3(positionsMap.xy*50.0*i,uTime*0.15))*0.0002/i);
+
+      // elevation-=abs(cnoise(vec3(positionsMap.xz*uSmallWavesFrequency*i,uTime*uSmallWavesSpeed))*uSmallWavesElevation/i);
+
       // elevation*= .2+abs(sin(uTime*0.2*i)*4.0/i);
       // elevation*= .4+abs(cos(uTime*0.4*i)*3.0/i);
   }
@@ -159,8 +168,8 @@ void main() {
 
   finalColor.g += elevation;
 
-  // float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x);
-  float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
+  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x*vUvOffset);
+  // float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
   finalColor.b = speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
