@@ -214,8 +214,7 @@ function buildDoubleBuffer() {
   scene.add(doubleBuffer.displayMesh);
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
-
-  gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(5).step(0.01).name('globalSpeed');
+  gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.0001).name('globalSpeed');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'x').min(0).max(0.05).step(0.0001).name('adderX');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'y').min(0).max(0.05).step(0.0001).name('adderY');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'z').min(0).max(0.05).step(0.0001).name('adderZ');
@@ -265,6 +264,18 @@ function bufferBuiltForSpeed() {
       positions: {
         type: "t",
         value: null
+      },
+      zoom: {
+        type: "f",
+        value: 10.0
+      },
+      zoomOut: {
+        type: "f",
+        value: 0.001
+      },
+      vUvOffset: {
+        type: "f",
+        value: 3.0
       }
     },
     fragmentShader: fboSpeed
@@ -278,6 +289,9 @@ function bufferBuiltForSpeed() {
 
 
   gui.add(speedMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
+  gui.add(speedMaterial.uniforms.zoom, 'value').min(0).max(100).step(1).name('noiseZoom');
+  gui.add(speedMaterial.uniforms.zoomOut, 'value').min(0).max(.01).step(0.00001).name('zoomOut');
+  gui.add(speedMaterial.uniforms.vUvOffset, 'value').min(0).max(100).step(.1).name('vUvOffset');
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({

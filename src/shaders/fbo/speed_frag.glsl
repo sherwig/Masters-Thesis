@@ -4,6 +4,9 @@ uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform float uTime;
 uniform float speed;
+uniform float zoom;
+uniform float zoomOut;
+uniform float vUvOffset;
 uniform sampler2D positions;
 
 #define PI 3.1415926538
@@ -133,32 +136,31 @@ void main() {
 
 
   vec4 finalColor = lastFrame; // override mix with test pattern
-  float zoom = 10.0;
+  // float zoom = 10.0;
 
-  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*3.0, uTime*0.15))*0.001;
+  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffset, uTime*0.15))*zoomOut;
 
   // float elevation = sin(finalColor.x*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
   // *sin(finalColor.z*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
   // *uBigWavesElevation;
 
-  float elevation = sin(finalColor.x*7.0+uTime*0.0002)
-  *sin(finalColor.z*8.0+uTime*0.0002)
-  *0.6;
+  float elevation = sin(positionsMap.x+vUvOrig.x*20.0+uTime*0.002)
+  *sin(positionsMap.z+vUvOrig.y*20.0+uTime*0.0002)
+  *.6;
 
   for (float i=1.0; i<=3.0; i++)
   {
-      elevation-=abs(cnoise(vec3(finalColor.xz*50.0*i,uTime*0.15))*0.0002/i);
-      elevation*= .2+abs(sin(uTime*0.2*i)*4.0/i);
+      // elevation-=abs(cnoise(vec3(finalColor.xz*50.0*i,uTime*0.15))*0.0002/i);
+      // elevation*= .2+abs(sin(uTime*0.2*i)*4.0/i);
       // elevation*= .4+abs(cos(uTime*0.4*i)*3.0/i);
   }
 
   // elevation*= 1.0+abs(cos(uTime*0.2)*3.0);
 
-  //finalColor.g = waves
   finalColor.g += elevation;
 
-  //finalColor.b = speed;
-  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x);
+  // float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x);
+  float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
   finalColor.b = speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;

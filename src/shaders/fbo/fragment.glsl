@@ -65,7 +65,7 @@ void main() {
   // float noiseVal = snoise(vUvOrig);
   // float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
   float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y));
-  float heading =  2.0 * PI*rotation;
+  float heading =  2.0 * PI * rotation;
 
 
   // finalColor.r += noiseAdder.x + noiseVal * 0.012;
@@ -74,9 +74,11 @@ void main() {
   // finalColor.b = 0.5;
 
   float speed = speedster.b;
-  //
-  finalColor.r += cos(heading)*globalSpeed*speed;
-  finalColor.g += sin(heading)*globalSpeed*speed;
+  // finalColor.r += cos(heading)*globalSpeed*speed;
+  // finalColor.g += sin(heading)*globalSpeed*speed;
+
+  finalColor.r = 0.5;
+  finalColor.g = 0.5;
 
   float elevation = speedster.g;
 
