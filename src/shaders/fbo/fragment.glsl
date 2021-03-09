@@ -4,7 +4,7 @@ uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform sampler2D speedMap;
 uniform float uTime;
-uniform float speed;
+uniform float globalSpeed;
 uniform vec3 noiseAdder;
 #define PI 3.1415926538
 // Simplex 2D noise
@@ -56,29 +56,31 @@ void main() {
   //Gonna need a second double
   //a heading and a rotation
 
+  //Getting out values out of our speed double buffer
   vec4 speedster = texture2D(speedMap, vUv);
+
+  float rotation = speedster.r;
 
   // add color & loop
   // float noiseVal = snoise(vUvOrig);
   // float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
-  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y ));
-  float heading =  2.0 * PI;
-  // float speed =0.001;
-  // noiseVal+= -0.5;
-  // finalColor.r += cos(heading) * speed;
-  // finalColor.g += sin(heading) * speed;
-  // finalColor.b += sin(heading) * speed;
-
-  finalColor.r += noiseAdder.x + noiseVal * 0.012;
-  finalColor.g += noiseAdder.y + noiseVal * 0.000008;
-  finalColor.b -= noiseAdder.z + noiseVal * 0.0016;
+  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y));
+  float heading =  2.0 * PI*rotation;
 
 
-  finalColor.r += cos(heading)*speedster.r*speed;
-  finalColor.g += sin(heading)*speedster.r*speed;
+  // finalColor.r += noiseAdder.x + noiseVal * 0.012;
+  // finalColor.g += noiseAdder.y + noiseVal * 0.000008;
+  // finalColor.b -= noiseAdder.z + noiseVal * 0.0016;
+  // finalColor.b = 0.5;
 
+  float speed = speedster.b;
+  //
+  finalColor.r += cos(heading)*globalSpeed*speed;
+  finalColor.g += sin(heading)*globalSpeed*speed;
 
-  finalColor.g += speedster.z*speed;
+  float elevation = speedster.g;
+
+  finalColor.b += elevation*globalSpeed*speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

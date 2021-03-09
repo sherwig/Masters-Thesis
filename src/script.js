@@ -193,9 +193,9 @@ function buildDoubleBuffer() {
         type: "f",
         value: 0
       },
-      speed: {
+      globalSpeed: {
         type: "f",
-        value: 0.001
+        value: 0.01
       },
       speedMap: {
         type: "t",
@@ -215,7 +215,7 @@ function buildDoubleBuffer() {
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
 
-  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speed');
+  gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(5).step(0.01).name('globalSpeed');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'x').min(0).max(0.05).step(0.0001).name('adderX');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'y').min(0).max(0.05).step(0.0001).name('adderY');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'z').min(0).max(0.05).step(0.0001).name('adderZ');
@@ -232,9 +232,11 @@ function buildDoubleBuffer() {
   // }
 }
 
+var speedMaterial;
+
 function bufferBuiltForSpeed() {
   var offset = new THREE.Vector2(0, 0);
-  let bufferMaterial = new THREE.ShaderMaterial({
+  speedMaterial = new THREE.ShaderMaterial({
     uniforms: {
       lastFrame: {
         type: "t",
@@ -259,11 +261,15 @@ function bufferBuiltForSpeed() {
       speed: {
         type: "f",
         value: 0.001
+      },
+      positions: {
+        type: "t",
+        value: null
       }
     },
     fragmentShader: fboSpeed
   });
-  doubleSpeedBuffer = new ThreeDoubleBuffer(simSize, simSize, bufferMaterial, true);
+  doubleSpeedBuffer = new ThreeDoubleBuffer(simSize, simSize, speedMaterial, true);
 
   // add double buffer plane to main THREE scene
   scene.add(doubleSpeedBuffer.displayMesh);
@@ -271,7 +277,7 @@ function bufferBuiltForSpeed() {
   doubleSpeedBuffer.displayMesh.position.set(60, 0, 0);
 
 
-  gui.add(bufferMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
+  gui.add(speedMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
   // add debug rednerer & add to DOM
   // if (debugRender) {
   //   debugRenderer = new THREE.WebGLRenderer({
@@ -468,6 +474,8 @@ function updateObjects() {
   const time = performance.now() * 0.0001;
   particleMaterial.uniforms["uTime"].value = time;
   particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
+  speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
+
   // gradientMaterial.uniforms["time"].value = time;
 
   // rotate shape

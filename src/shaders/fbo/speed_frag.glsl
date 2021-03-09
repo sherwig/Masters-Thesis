@@ -4,6 +4,8 @@ uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform float uTime;
 uniform float speed;
+uniform sampler2D positions;
+
 #define PI 3.1415926538
 // Simplex 2D noise
 //
@@ -127,9 +129,13 @@ void main() {
 
   vec4 lastFrame = texture2D(lastFrame, vUv);
 
+  vec4 positionsMap = texture2D(positions, vUv);
+
+
   vec4 finalColor = lastFrame; // override mix with test pattern
   float zoom = 10.0;
-  finalColor.r += cnoise(vec3(vUvOrig * zoom,uTime*0.15));
+
+  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*3.0, uTime*0.15))*0.001;
 
   // float elevation = sin(finalColor.x*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
   // *sin(finalColor.z*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
@@ -148,7 +154,12 @@ void main() {
 
   // elevation*= 1.0+abs(cos(uTime*0.2)*3.0);
 
+  //finalColor.g = waves
   finalColor.g += elevation;
+
+  //finalColor.b = speed;
+  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x);
+  finalColor.b = speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

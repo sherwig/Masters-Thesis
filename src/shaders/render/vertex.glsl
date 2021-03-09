@@ -50,5 +50,5 @@ void main() {
   vUv = uv;
   vColorUV = colorUV;
   vScale = scale;
-  vElevation = mapPosition.y;
+  vElevation = mapPosition.z;
 }
