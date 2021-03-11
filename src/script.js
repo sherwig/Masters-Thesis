@@ -26,6 +26,11 @@ const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
 var doubleBuffer, doubleSpeedBuffer;
 
+var buffGeom, geometry, translateArray, colorUVArray, particleMaterial, mesh;
+
+
+
+
 const debugObject = {};
 debugObject.depthColor = '#186691';
 debugObject.surfaceColor = '#9bd8ff';
@@ -158,12 +163,17 @@ class ThreeDoubleBuffer {
 
 }
 
+
+
+
+
 const simSize = 256;
 
 function init() {
   // this.simSize = 256;
   // this.buildColorMapFbo();
-  buildParticles();
+  // buildParticles();
+  seaBuilder.buildParticles();
   buildDoubleBuffer();
   bufferBuiltForSpeed();
   // startAnimation();
@@ -334,6 +344,120 @@ function bufferBuiltForSpeed() {
 
 var mesh;
 var particleMaterial;
+
+
+// constructor(width, height, buffGeom, geometry, translateArray, colorUVArray, simSize, particleMaterial, renderShader, vertexShader, mesh)
+
+
+class particleBuilder {
+  constructor(width, height, buffGeom, geometry, translateArray, colorUVArray, simSize, particleMaterial, fragmentShader, vertexShader, mesh) {
+    this.width = width;
+    this.height = height;
+    this.buffGeom = buffGeom;
+    this.geometry = geometry;
+    this.translateArray = translateArray;
+    this.colorUVArray = colorUVArray;
+    this.simSize = simSize;
+    this.particleMaterial = particleMaterial;
+    this.vertexShader = vertexShader;
+    this.fragmentShader = fragmentShader;
+    this.mesh = mesh;
+  }
+
+  buildParticles() {
+    this.buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
+    this.geometry = new THREE.InstancedBufferGeometry();
+
+    this.geometry.index = this.buffGeom.index;
+    this.geometry.attributes = this.buffGeom.attributes;
+
+    var particleCount = this.width * this.height;
+    var meshRadius = 200;
+    var meshDepth = 400;
+    this.translateArray = new Float32Array(particleCount * 3);
+    this.colorUVArray = new Float32Array(particleCount * 2);
+
+    for (let i = 0, i2 = 0, i3 = 0, l = particleCount; i < l; i++, i2 += 2, i3 += 3) {
+      this.translateArray[i3 + 0] = -1 + 2 * ((i % this.simSize) / this.simSize);
+      this.translateArray[i3 + 1] = -1 + 2 * (Math.floor(i / this.simSize) / this.simSize);
+      this.translateArray[i3 + 2] = 0.;
+
+      this.colorUVArray[i2 + 0] = ((i % this.simSize) / this.simSize); // i/particleCount;
+      this.colorUVArray[i2 + 1] = (Math.floor(i / this.simSize) / this.simSize); // 0.5
+    }
+
+    this.geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(this.translateArray, 3));
+    this.geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(this.colorUVArray, 2));
+
+    particleMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        map: {
+          value: new THREE.TextureLoader().load('textures/circle.png')
+        },
+        colorMap: {
+          value: new THREE.TextureLoader().load(gradientImage)
+        },
+        positionsMap: {
+          value: null
+        },
+        uTime: {
+          value: 0.0
+        },
+        fullScale: {
+          value: 1.0
+        },
+        xScale: {
+          value: 1.5
+        },
+        yScale: {
+          value: 1.5
+        },
+        zScale: {
+          value: 0.2
+        }
+      },
+      vertexShader: this.vertexShader,
+      fragmentShader: this.fragmentShader,
+      depthWrite: false,
+      depthTest: true,
+      blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
+    });
+    console.log(particleMaterial.vertexShader);
+
+    this.mesh = new THREE.Mesh(this.geometry, this.particleMaterial);
+    this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
+    // mesh.rotatation.x = Math.PI;
+    this.mesh.rotation.x = Math.PI / 2;
+    // console.log(mesh);
+    scene.add(this.mesh);
+  }
+
+  getUniform(key) {
+    return this.particleMaterial.uniforms[key].value;
+  };
+
+  getTexture() {
+    return this.particleMaterial;
+  };
+
+}
+
+
+const seaBuilder = new particleBuilder(simSize, simSize, geometry, translateArray, colorUVArray, simSize, particleMaterial, renderFragment, renderVertex, mesh);
+
+console.log(renderVertex);
+// gui.add(particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
+// gui.add(particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
+// gui.add(particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
+// gui.add(particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
+//
+// gui.addColor(debugObject, 'depthColor').name('depthColor').onChange(() => {
+//   particleMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor)
+// });
+//
+// gui.addColor(debugObject, 'surfaceColor').name('surfaceColor').onChange(() => {
+//   particleMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor)
+// });
 
 function buildParticles() {
   // build geometry for particles
