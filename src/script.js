@@ -204,6 +204,10 @@ function buildDoubleBuffer() {
       noiseAdder: {
         type: "f",
         value: new THREE.Vector3(0.001, 0.001, 0.001)
+      },
+      rotAmp: {
+        type: "f",
+        value: 3.0
       }
     },
     fragmentShader: fboFragment
@@ -215,6 +219,7 @@ function buildDoubleBuffer() {
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
   gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.0001).name('globalSpeed');
+  gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(10).step(0.1).name('rotAmp');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'x').min(0).max(0.05).step(0.0001).name('adderX');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'y').min(0).max(0.05).step(0.0001).name('adderY');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'z').min(0).max(0.05).step(0.0001).name('adderZ');
@@ -267,23 +272,27 @@ function bufferBuiltForSpeed() {
       },
       zoom: {
         type: "f",
-        value: 10.0
+        value: 40.0
       },
       zoomOut: {
         type: "f",
         value: 0.001
       },
-      vUvOffset: {
+      vUvOffsetNoise: {
         type: "f",
-        value: 1.0
+        value: .2
+      },
+      vUvOffsetWaves: {
+        type: "f",
+        value: .06
       },
       uBigWavesElevation: {
         type: "f",
-        value: .3
+        value: .6
       },
       uBigWavesFrequency: {
         type: "f",
-        value: new THREE.Vector2(4, 1.5)
+        value: new THREE.Vector2(5, 5)
       },
       uBigWavesSpeed: {
         type: "f",
@@ -301,9 +310,10 @@ function bufferBuiltForSpeed() {
 
 
   gui.add(speedMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
-  gui.add(speedMaterial.uniforms.zoom, 'value').min(0).max(100).step(1).name('noiseZoom');
+  gui.add(speedMaterial.uniforms.zoom, 'value').min(0).max(1000).step(1).name('noiseZoom');
   gui.add(speedMaterial.uniforms.zoomOut, 'value').min(0).max(.01).step(0.00001).name('zoomOut');
-  gui.add(speedMaterial.uniforms.vUvOffset, 'value').min(0).max(5).step(.01).name('vUvOffset');
+  gui.add(speedMaterial.uniforms.vUvOffsetNoise, 'value').min(0).max(5).step(.01).name('vUvOffsetNoise');
+  gui.add(speedMaterial.uniforms.vUvOffsetWaves, 'value').min(0).max(5).step(.01).name('vUvOffsetWaves');
   gui.add(speedMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
   gui.add(speedMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX');
   gui.add(speedMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY');
@@ -397,16 +407,16 @@ function buildParticles() {
         value: 0.0
       },
       "fullScale": {
-        value: 1.2
+        value: 1.0
       },
       "xScale": {
-        value: 0.5
+        value: 1.5
       },
       "yScale": {
-        value: 0.5
+        value: 1.5
       },
       "zScale": {
-        value: 0.5
+        value: 0.2
       },
       uDepthColor: {
         value: new THREE.Color(debugObject.depthColor)

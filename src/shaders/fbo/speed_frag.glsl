@@ -6,7 +6,8 @@ uniform float uTime;
 uniform float speed;
 uniform float zoom;
 uniform float zoomOut;
-uniform float vUvOffset;
+uniform float vUvOffsetNoise;
+uniform float vUvOffsetWaves;
 uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
@@ -141,10 +142,10 @@ void main() {
   vec4 finalColor = lastFrame; // override mix with test pattern
   // float zoom = 10.0;
 
-  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffset, uTime*0.15))*zoomOut;
+  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffsetNoise, uTime*0.15))*zoomOut;
 
-  float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
-  *sin(positionsMap.y+(vUvOrig.y*vUvOffset)*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
+  float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffsetWaves)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
+  *sin(positionsMap.y+(vUvOrig.y*vUvOffsetWaves)*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
   *uBigWavesElevation;
 
   // float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
@@ -168,7 +169,7 @@ void main() {
 
   finalColor.g += elevation;
 
-  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x*vUvOffset);
+  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x*vUvOffsetNoise);
   // float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
   finalColor.b = speed;
 

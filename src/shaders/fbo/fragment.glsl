@@ -4,6 +4,7 @@ uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform sampler2D speedMap;
 uniform float uTime;
+uniform float rotAmp;
 uniform float globalSpeed;
 uniform vec3 noiseAdder;
 #define PI 3.1415926538
@@ -65,12 +66,11 @@ void main() {
   // float noiseVal = snoise(vUvOrig);
   // float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
   float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y));
-  float heading =  2.0 * PI * rotation;
-
+  float heading =  (2.0 * PI * rotation)*rotAmp;
+  // float heading =  (2.0 * PI * rotation);
   //
   // finalColor.r += noiseAdder.x + noiseVal * 0.012;
   // finalColor.g += noiseAdder.y + noiseVal * 0.000008;
-  
   // finalColor.b -= noiseAdder.z + noiseVal * 0.0016;
 
   // finalColor.g += 0.001;
@@ -86,7 +86,8 @@ void main() {
 
   // finalColor.b -= elevation*globalSpeed*speed;
   // finalColor.b -= elevation*globalSpeed*speed;
-  finalColor.b += elevation * globalSpeed * speed;
+  // finalColor.b += elevation * globalSpeed ;
+  finalColor.b =0.5;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;
