@@ -31,8 +31,8 @@ void main() {
   // for correct inheritance of mesh position/rotation.
   // doing this afterwards was losing coordinate system rotation
 
-  // vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
-  vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
+  vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
+  // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
 
   // wrap offsets with a fade

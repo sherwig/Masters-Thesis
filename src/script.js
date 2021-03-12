@@ -168,63 +168,63 @@ function init() {
   // startAnimation();
 }
 
-// class buildBuffers {
-//   constructor(fragmentShader, simSize) {
-//     // this.doubleBuffer = doubleBuffer;
-//     this.simSize = simSize;
-//     this.fragmentShader = fragmentShader;
-//     this.buildBuffers();
-//   }
-//
-//   buildBuffers() {
-//     this.offset = new THREE.Vector2(0, 0);
-//     this.bufferMaterial = new THREE.ShaderMaterial({
-//       uniforms: {
-//         lastFrame: {
-//           type: "t",
-//           value: null
-//         },
-//         imgTex: {
-//           type: "t",
-//           value: new THREE.TextureLoader().load('textures/noise.jpg')
-//         },
-//         res: {
-//           type: "v2",
-//           value: new THREE.Vector2(this.simSize, this.simSize)
-//         },
-//         speedTex: {
-//           type: "t",
-//           value: new THREE.TextureLoader().load('textures/noise.jpg')
-//         },
-//         uTime: {
-//           type: "f",
-//           value: 0
-//         },
-//         globalSpeed: {
-//           type: "f",
-//           value: 0.01
-//         },
-//         speedMap: {
-//           type: "t",
-//           value: null
-//         },
-//         noiseAdder: {
-//           type: "f",
-//           value: new THREE.Vector3(0.001, 0.001, 0.001)
-//         },
-//         rotAmp: {
-//           type: "f",
-//           value: 3.0
-//         }
-//       },
-//       fragmentShader: this.fragmentShader
-//     });
-//     this.doubleBuffer = new ThreeDoubleBuffer(this.simSize, this.simSize, this.bufferMaterial, true);
-//
-//     this.scene.add(this.doubleBuffer.displayMesh);
-//     this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
-//   }
-// }
+class buildBuffers {
+  constructor(fragmentShader, simSize) {
+    // this.doubleBuffer = doubleBuffer;
+    this.simSize = simSize;
+    this.fragmentShader = fragmentShader;
+    this.buildBuffers();
+  }
+
+  buildBuffers() {
+    this.offset = new THREE.Vector2(0, 0);
+    this.bufferMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        lastFrame: {
+          type: "t",
+          value: null
+        },
+        imgTex: {
+          type: "t",
+          value: new THREE.TextureLoader().load('textures/noise.jpg')
+        },
+        res: {
+          type: "v2",
+          value: new THREE.Vector2(this.simSize, this.simSize)
+        },
+        speedTex: {
+          type: "t",
+          value: new THREE.TextureLoader().load('textures/noise.jpg')
+        },
+        uTime: {
+          type: "f",
+          value: 0
+        },
+        globalSpeed: {
+          type: "f",
+          value: 0.01
+        },
+        speedMap: {
+          type: "t",
+          value: null
+        },
+        noiseAdder: {
+          type: "f",
+          value: new THREE.Vector3(0.001, 0.001, 0.001)
+        },
+        rotAmp: {
+          type: "f",
+          value: 3.0
+        }
+      },
+      fragmentShader: this.fragmentShader
+    });
+    this.doubleBuffer = new ThreeDoubleBuffer(this.simSize, this.simSize, this.bufferMaterial, true);
+
+    this.scene.add(this.doubleBuffer.displayMesh);
+    this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  }
+}
 //
 // var buffer1 = new buildBuffers(fboFragment, simSize)
 
