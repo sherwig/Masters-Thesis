@@ -86,8 +86,8 @@ void main() {
 
   // finalColor.b -= elevation*globalSpeed*speed;
   // finalColor.b -= elevation*globalSpeed*speed;
-  // finalColor.b += elevation * globalSpeed ;
-  finalColor.b =0.5;
+  finalColor.b += elevation * globalSpeed ;
+  // finalColor.b =0.5;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

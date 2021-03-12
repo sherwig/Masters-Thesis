@@ -28,9 +28,6 @@ const texture = new THREE.TextureLoader().load('textures/gradient.png');
 var doubleBuffer, doubleSpeedBuffer;
 
 
-
-
-
 class ThreeDoubleBuffer {
   constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
     this.width = width;
@@ -170,6 +167,66 @@ function init() {
   bufferBuiltForSpeed();
   // startAnimation();
 }
+
+// class buildBuffers {
+//   constructor(fragmentShader, simSize) {
+//     // this.doubleBuffer = doubleBuffer;
+//     this.simSize = simSize;
+//     this.fragmentShader = fragmentShader;
+//     this.buildBuffers();
+//   }
+//
+//   buildBuffers() {
+//     this.offset = new THREE.Vector2(0, 0);
+//     this.bufferMaterial = new THREE.ShaderMaterial({
+//       uniforms: {
+//         lastFrame: {
+//           type: "t",
+//           value: null
+//         },
+//         imgTex: {
+//           type: "t",
+//           value: new THREE.TextureLoader().load('textures/noise.jpg')
+//         },
+//         res: {
+//           type: "v2",
+//           value: new THREE.Vector2(this.simSize, this.simSize)
+//         },
+//         speedTex: {
+//           type: "t",
+//           value: new THREE.TextureLoader().load('textures/noise.jpg')
+//         },
+//         uTime: {
+//           type: "f",
+//           value: 0
+//         },
+//         globalSpeed: {
+//           type: "f",
+//           value: 0.01
+//         },
+//         speedMap: {
+//           type: "t",
+//           value: null
+//         },
+//         noiseAdder: {
+//           type: "f",
+//           value: new THREE.Vector3(0.001, 0.001, 0.001)
+//         },
+//         rotAmp: {
+//           type: "f",
+//           value: 3.0
+//         }
+//       },
+//       fragmentShader: this.fragmentShader
+//     });
+//     this.doubleBuffer = new ThreeDoubleBuffer(this.simSize, this.simSize, this.bufferMaterial, true);
+//
+//     this.scene.add(this.doubleBuffer.displayMesh);
+//     this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+//   }
+// }
+//
+// var buffer1 = new buildBuffers(fboFragment, simSize)
 
 function buildDoubleBuffer() {
   var offset = new THREE.Vector2(0, 0);
@@ -338,28 +395,19 @@ function bufferBuiltForSpeed() {
 
 
 class particleBuilder {
-  // constructor(width, height, buffGeom, geometry, translateArray, colorUVArray, simSize, particleMaterial, fragmentShader, vertexShader, mesh) {
   constructor(width, height, simSize, fragmentShader, vertexShader, debugObject) {
     this.width = width;
     this.height = height;
-    // this.buffGeom = buffGeom;
-    // this.geometry = geometry;
-    // this.translateArray = translateArray;
-    // this.colorUVArray = colorUVArray;
     this.simSize = simSize;
-    // this.particleMaterial = particleMaterial;
     this.fragmentShader = fragmentShader;
     this.vertexShader = vertexShader;
     this.debugObject = debugObject;
     this.buildParticles();
-    // this.mesh = mesh;
   }
 
   buildParticles() {
-    // var buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
     this.buffGeom = new THREE.PlaneBufferGeometry(1, 1, 1);
     this.geometry = new THREE.InstancedBufferGeometry();
-
     this.geometry.index = this.buffGeom.index;
     this.geometry.attributes = this.buffGeom.attributes;
 
@@ -421,13 +469,11 @@ class particleBuilder {
       depthTest: true,
       blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
     });
-    // console.log(this.particleMaterial.vertexShader);
 
     this.mesh = new THREE.Mesh(this.geometry, this.particleMaterial);
     this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
     // mesh.rotatation.x = Math.PI;
     this.mesh.rotation.x = Math.PI / 2;
-    // console.log(this.mesh);
     scene.add(this.mesh);
   }
 
@@ -449,7 +495,6 @@ const debugObject = {};
 debugObject.depthColor = '#186691';
 debugObject.surfaceColor = '#9bd8ff';
 
-// const seaBuilder = new particleBuilder(simSize, simSize, buffGeom, geometry, translateArray, colorUVArray, simSize, particleMaterial, renderFragment, renderVertex, mesh);
 const seaBuilder = new particleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, debugObject);
 
 gui.add(seaBuilder.particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
