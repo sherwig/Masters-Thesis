@@ -16,6 +16,7 @@ import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
 // import colorImage from '../static/textures/color.jpeg'
 
+
 const gui = new dat.GUI()
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -27,8 +28,6 @@ const texture = new THREE.TextureLoader().load('textures/gradient.png');
 var doubleBuffer, doubleSpeedBuffer;
 
 var buffGeom, geometry, translateArray, colorUVArray, particleMaterial, mesh;
-
-
 
 
 const debugObject = {};
@@ -162,10 +161,6 @@ class ThreeDoubleBuffer {
   }
 
 }
-
-
-
-
 
 const simSize = 256;
 
@@ -359,8 +354,8 @@ class particleBuilder {
     this.colorUVArray = colorUVArray;
     this.simSize = simSize;
     this.particleMaterial = particleMaterial;
-    this.vertexShader = vertexShader;
     this.fragmentShader = fragmentShader;
+    this.vertexShader = vertexShader;
     this.mesh = mesh;
   }
 
@@ -389,7 +384,7 @@ class particleBuilder {
     this.geometry.setAttribute('translate', new THREE.InstancedBufferAttribute(this.translateArray, 3));
     this.geometry.setAttribute('colorUV', new THREE.InstancedBufferAttribute(this.colorUVArray, 2));
 
-    particleMaterial = new THREE.ShaderMaterial({
+    this.particleMaterial = new THREE.ShaderMaterial({
       uniforms: {
         map: {
           value: new THREE.TextureLoader().load('textures/circle.png')
@@ -414,7 +409,7 @@ class particleBuilder {
         },
         zScale: {
           value: 0.2
-        }
+        },
       },
       vertexShader: this.vertexShader,
       fragmentShader: this.fragmentShader,
@@ -422,7 +417,7 @@ class particleBuilder {
       depthTest: true,
       blending: THREE.AdditiveBlending, // handle z-stacking, instead of more difficult measures: https://discourse.threejs.org/t/threejs-and-the-transparent-problem/11553/7
     });
-    console.log(particleMaterial.vertexShader);
+    // console.log(this.particleMaterial.vertexShader);
 
     this.mesh = new THREE.Mesh(this.geometry, this.particleMaterial);
     this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
@@ -440,13 +435,20 @@ class particleBuilder {
     return this.particleMaterial;
   };
 
+  setUniform(key, val) {
+    this.particleMaterial.uniforms[key].value = val;
+  };
+
 }
 
+const seaBuilder = new particleBuilder(simSize, simSize, buffGeom, geometry, translateArray, colorUVArray, simSize, particleMaterial, renderFragment, renderVertex, mesh);
 
-const seaBuilder = new particleBuilder(simSize, simSize, geometry, translateArray, colorUVArray, simSize, particleMaterial, renderFragment, renderVertex, mesh);
+// var scaler = seaBuilder.getUniform(2);
 
-console.log(renderVertex);
-// gui.add(particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
+// console.log(seaBuilder.particleMaterial.uniforms);
+
+
+// gui.add(seaBuilder.getUniform["fullScale"]).min(0).max(10).step(0.01).name('fullScale');
 // gui.add(particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
 // gui.add(particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
 // gui.add(particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
@@ -637,11 +639,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
-  particleMaterial.uniforms["uTime"].value = time;
-  particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
+  seaBuilder.setUniform("uTime", time);
+  // particleMaterial.uniforms["uTime"].value = time;
+  seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
+  // particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
   speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
 
-  // gradientMaterial.uniforms["time"].value = time;
 
   // rotate shape
   const cameraAmp = 2;
