@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform vec2 res;
 uniform sampler2D lastFrame;
 uniform sampler2D imgTex;
@@ -39,6 +41,10 @@ float snoise(vec2 v){
 }
 
 
+float random (vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);
+}
+
 void main() {
   vec2 texel = 1. / res;
   // get orig color and normanlized numbers
@@ -66,6 +72,7 @@ void main() {
   // float noiseVal = snoise(vUvOrig);
   // float noiseVal = snoise(vUvOrig * (1. + 0.1 * sin(uTime * 2.)));
   float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y));
+
   float heading =  (2.0 * PI * rotation)*rotAmp;
   // float heading =  (2.0 * PI * rotation);
 
@@ -85,17 +92,32 @@ void main() {
 
   float elevation = speedster.g;
 
-  // finalColor.b -= elevation*globalSpeed*speed;
-  // finalColor.b -= elevation*globalSpeed*speed;
   // finalColor.b += elevation * globalSpeed;
   finalColor.b =0.5;
 
-  if(finalColor.r > 1.) finalColor.r = 0.;
-  if(finalColor.g > 1.) finalColor.g = 0.;
-  if(finalColor.b > 1.) finalColor.b = 0.;
-  if(finalColor.r < 0.) finalColor.r = 1.;
-  if(finalColor.g < 0.) finalColor.g = 1.;
-  if(finalColor.b < 0.) finalColor.b = 1.;
+  // if(finalColor.r > 1.) finalColor.r = 0.;
+  // if(finalColor.g > 1.) finalColor.g = 0.;
+  // if(finalColor.b > 1.) finalColor.b = 0.;
+  // if(finalColor.r < 0.) finalColor.r = 1.;
+  // if(finalColor.g < 0.) finalColor.g = 1.;
+  // if(finalColor.b < 0.) finalColor.b = 1.;
+
+  // if(finalColor.r >= 1.) finalColor.r = 0.5;
+  // if(finalColor.g >= 1.) finalColor.g = 0.5;
+  // if(finalColor.b >= 1.) finalColor.b = 0.5;
+  // if(finalColor.r <= 0.) finalColor.r = .5;
+  // if(finalColor.g <= 0.) finalColor.g = .5;
+  // if(finalColor.b <= 0.) finalColor.b = .5;
+
+  float randomizer = random(vUvOrig);
+
+  if(finalColor.r >= 1.) finalColor.r = randomizer;
+  if(finalColor.g >= 1.) finalColor.g = randomizer;
+  if(finalColor.b >= 1.) finalColor.b = randomizer;
+  if(finalColor.r <= 0.) finalColor.r = randomizer;
+  if(finalColor.g <= 0.) finalColor.g = randomizer;
+  if(finalColor.b <= 0.) finalColor.b = randomizer;
+
 
 
 

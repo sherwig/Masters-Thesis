@@ -1,4 +1,5 @@
-precision mediump float;
+precision highp float;
+
 // custom uniforms
 uniform float time;
 uniform sampler2D colorMap;
@@ -31,8 +32,8 @@ void main() {
   // for correct inheritance of mesh position/rotation.
   // doing this afterwards was losing coordinate system rotation
 
-  vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
-  // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
+  // vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
+  vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
 
   // wrap offsets with a fade
@@ -43,6 +44,7 @@ void main() {
   if(mapPosition.y < 0.2) scale = min(scale, map(mapPosition.y, 0.2, 0., scale, 0.));
   if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
   if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
+
   // set final vert position
   mvPosition.xyz += (position + posOffset) * scale;
   gl_Position = projectionMatrix * mvPosition;

@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform vec2 res;
 uniform sampler2D lastFrame;
 uniform sampler2D imgTex;
@@ -142,22 +144,18 @@ void main() {
   vec4 finalColor = lastFrame; // override mix with test pattern
   // float zoom = 10.0;
 
-  finalColor.r += cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffsetNoise, uTime*0.15))*zoomOut;
+  // finalColor.r = cnoise(vec3(positionsMap.xy * zoom+vUvOrig*vUvOffsetNoise, uTime*0.15))*zoomOut;
+
+  finalColor.r = cnoise(vec3(positionsMap.xy * 4.0+(sin(uTime*3.0))+vUvOrig*0.6+(sin(uTime*0.3)), uTime*1.0))*zoomOut;
 
   float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffsetWaves)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
   *sin(positionsMap.y+(vUvOrig.y*vUvOffsetWaves)*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
   *uBigWavesElevation;
 
-  // float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
-  // *uBigWavesElevation;
-
-  // float elevation = sin(positionsMap.x+(vUvOrig.x*vUvOffset)*uBigWavesFrequency.x+uTime*uBigWavesSpeed)
-  // *sin(positionsMap.z*uBigWavesFrequency.y+uTime*uBigWavesSpeed)
-  // *uBigWavesElevation;
 
   for (float i=1.0; i<=3.0; i++)
   {
-      // elevation-=abs(cnoise(vec3(positionsMap.xy*50.0*i,uTime*0.15))*0.0002/i);
+      elevation-=abs(cnoise(vec3(positionsMap.xy*50.0*i,uTime*0.15))*0.0002/i);
 
       // elevation-=abs(cnoise(vec3(positionsMap.xz*uSmallWavesFrequency*i,uTime*uSmallWavesSpeed))*uSmallWavesElevation/i);
 
@@ -169,8 +167,9 @@ void main() {
 
   finalColor.g += elevation;
 
-  float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x*vUvOffsetNoise);
-  // float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
+  // float speed = 0.3+0.2*sin(uTime*0.4+vUvOrig.x*vUvOffsetNoise);
+  // float speed = 0.5;
+  float speed = 0.3+0.2*sin(uTime*0.4+positionsMap.x);
   finalColor.b = speed;
 
   if(finalColor.r > 1.) finalColor.r = 0.;

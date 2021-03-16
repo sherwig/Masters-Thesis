@@ -266,7 +266,7 @@ function buildDoubleBuffer() {
       },
       rotAmp: {
         type: "f",
-        value: 3.0
+        value: 5.0
       }
     },
     fragmentShader: fboFragment
@@ -331,11 +331,11 @@ function bufferBuiltForSpeed() {
       },
       zoom: {
         type: "f",
-        value: 40.0
+        value: 4.0
       },
       zoomOut: {
         type: "f",
-        value: 0.001
+        value: 0.5
       },
       vUvOffsetNoise: {
         type: "f",
@@ -394,7 +394,7 @@ function bufferBuiltForSpeed() {
 
 
 
-class particleBuilder {
+class ParticleBuilder {
   constructor(width, height, simSize, fragmentShader, vertexShader, debugObject) {
     this.width = width;
     this.height = height;
@@ -403,6 +403,7 @@ class particleBuilder {
     this.vertexShader = vertexShader;
     this.debugObject = debugObject;
     this.buildParticles();
+    this.buildGui();
   }
 
   buildParticles() {
@@ -457,10 +458,10 @@ class particleBuilder {
           value: 0.2
         },
         uDepthColor: {
-          value: new THREE.Color(debugObject.depthColor)
+          value: new THREE.Color(this.debugObject.depthColor)
         },
         uSurfaceColor: {
-          value: new THREE.Color(debugObject.surfaceColor)
+          value: new THREE.Color(this.debugObject.surfaceColor)
         },
       },
       vertexShader: this.vertexShader,
@@ -489,25 +490,31 @@ class particleBuilder {
     this.particleMaterial.uniforms[key].value = val;
   };
 
+  buildGui() {
+    gui.add(this.particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
+    gui.add(this.particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
+    gui.add(this.particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
+    gui.add(this.particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
+    gui.addColor(this.debugObject, 'depthColor').name('depthColor').onChange(() => {
+      this.particleMaterial.uniforms.uDepthColor.value.set(this.debugObject.depthColor)
+    });
+
+    gui.addColor(this.debugObject, 'surfaceColor').name('surfaceColor').onChange(() => {
+      this.particleMaterial.uniforms.uSurfaceColor.value.set(this.debugObject.surfaceColor)
+    });
+  }
+
 }
 
-const debugObject = {};
-debugObject.depthColor = '#186691';
-debugObject.surfaceColor = '#9bd8ff';
+// const debugObject = {};
+// debugObject.depthColor = '#186691';
+// debugObject.surfaceColor = '#9bd8ff';
 
-const seaBuilder = new particleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, debugObject);
-
-gui.add(seaBuilder.particleMaterial.uniforms.fullScale, 'value').min(0).max(10).step(0.01).name('fullScale');
-gui.add(seaBuilder.particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
-gui.add(seaBuilder.particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
-gui.add(seaBuilder.particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
-gui.addColor(debugObject, 'depthColor').name('depthColor').onChange(() => {
-  seaBuilder.particleMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor)
+const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, {
+  depthColor: '#186691',
+  surfaceColor: '#9bd8ff'
 });
 
-gui.addColor(debugObject, 'surfaceColor').name('surfaceColor').onChange(() => {
-  seaBuilder.particleMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor)
-});
 
 
 const sizes = {
