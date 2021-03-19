@@ -163,8 +163,10 @@ function init() {
   // this.buildColorMapFbo();
   // buildParticles();
   // seaBuilder.buildParticles();
+
   buildDoubleBuffer();
   bufferBuiltForSpeed();
+  addShadow();
   // startAnimation();
 }
 
@@ -278,7 +280,7 @@ function buildDoubleBuffer() {
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
   gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.0001).name('globalSpeed');
-  gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(10).step(0.1).name('rotAmp');
+  gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'x').min(0).max(0.05).step(0.0001).name('adderX');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'y').min(0).max(0.05).step(0.0001).name('adderY');
   gui.add(bufferMaterial.uniforms.noiseAdder.value, 'z').min(0).max(0.05).step(0.0001).name('adderZ');
@@ -370,7 +372,7 @@ function bufferBuiltForSpeed() {
 
   gui.add(speedMaterial.uniforms.speed, 'value').min(0).max(0.01).step(0.0001).name('speedSpeed');
   gui.add(speedMaterial.uniforms.zoom, 'value').min(0).max(1000).step(1).name('noiseZoom');
-  gui.add(speedMaterial.uniforms.zoomOut, 'value').min(0).max(.01).step(0.00001).name('zoomOut');
+  gui.add(speedMaterial.uniforms.zoomOut, 'value').min(0).max(3).step(0.01).name('zoomOut');
   gui.add(speedMaterial.uniforms.vUvOffsetNoise, 'value').min(0).max(5).step(.01).name('vUvOffsetNoise');
   gui.add(speedMaterial.uniforms.vUvOffsetWaves, 'value').min(0).max(5).step(.01).name('vUvOffsetWaves');
   gui.add(speedMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation');
@@ -475,7 +477,9 @@ class ParticleBuilder {
     this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
     // mesh.rotatation.x = Math.PI;
     this.mesh.rotation.x = Math.PI / 2;
-    scene.add(this.mesh);
+
+    this.mesh.castShadow = true;
+    // scene.add(this.mesh);
   }
 
   getUniform(key) {
@@ -522,6 +526,71 @@ const sizes = {
   height: window.innerHeight
 }
 
+var spotlight, lightHelper, cube;
+
+function addShadow() {
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambientLight);
+  var pointLight = new THREE.PointLight(0x444444, 1, 0);
+  pointLight.position.set(-100, 100, 50);
+  scene.add(pointLight);
+
+  // add shadow plane
+  var planeSize = 300;
+  var plane = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(planeSize, planeSize),
+    new THREE.ShadowMaterial({
+      opacity: 0.5
+    })
+
+    // new THREE.MeshStandardMaterial({
+    //   // opacity: 0.2
+    //   color: 0xFF0000
+    //   // transparent: true
+    //   // alphaMap: simpleShadow
+    // })
+  );
+  plane.rotation.x = -Math.PI / 2;
+  plane.position.set(0, -150, 0);
+  plane.receiveShadow = true;
+  scene.add(plane);
+
+
+  const geometry = new THREE.BoxGeometry(50, 50, 50);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x00ff00
+  });
+
+  cube = new THREE.Mesh(geometry, material);
+  cube.position.y = -75;
+  cube.castShadow = true;
+  scene.add(cube);
+
+  // add shadow spotlight
+  spotlight = new THREE.SpotLight(0xffffff);
+  spotlight.position.set(0, 200, 0);
+  spotlight.target = plane;
+  spotlight.castShadow = true;
+  spotlight.shadow.mapSize.width = 4096 / 12;
+  spotlight.shadow.mapSize.height = 4096 / 12;
+  // this.spotlight.shadow.camera.near = 500;
+  // this.spotlight.shadow.camera.far = 4000;
+  // this.spotlight.shadow.camera.fov = 30;
+  spotlight.penumbra = 0.1;
+  spotlight.decay = 2;
+  spotlight.angle = 1;
+  spotlight.distance = 1000;
+  scene.add(spotlight);
+
+  // add light helper
+  var spotlightDebug = true;
+  if (spotlightDebug == true) {
+    lightHelper = new THREE.SpotLightHelper(spotlight);
+    scene.add(lightHelper);
+  }
+}
+
+
 
 window.addEventListener('resize', () => {
   // Update sizes
@@ -544,8 +613,8 @@ camera.position.set(0, 0, 400);
 // camera.lookAt(scene.position);
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
 /**
  * Renderer
@@ -555,6 +624,8 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.shadowMap.enabled = true;
+renderer.setClearColor(0xffffff);
 
 // function updateSimulation() {
 //   // update uniforms & re-render double buffer
@@ -576,9 +647,7 @@ function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
   seaBuilder.setUniform("uTime", time);
-  // particleMaterial.uniforms["uTime"].value = time;
   seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
-  // particleMaterial.uniforms["positionsMap"].value = doubleBuffer.getTexture();
   speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
 
 
@@ -624,7 +693,8 @@ const tick = () => {
 
   doubleBuffer.render(renderer);
 
-
+  cube.rotation.x = time;
+  cube.rotation.y = time;
 
   // updateSimulation();
   // Render
