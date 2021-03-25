@@ -560,7 +560,6 @@ const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMou
   depthColor: '#186691',
   surfaceColor: '#9bd8ff'
 });
-console.log(mountainBuilder);
 
 
 const sizes = {

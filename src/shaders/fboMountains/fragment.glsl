@@ -149,7 +149,7 @@ void main() {
   // finalColor.r +=  noiseVal * 0.012;
   // finalColor.g +=  noiseVal * 0.008;
 
-  finalColor.b += noiseVal *0.0016;
+  finalColor.b += noiseVal *0.0016+sin(uTime*0.0008);
 
   finalColor.r =0.5;
   finalColor.g =0.5;
