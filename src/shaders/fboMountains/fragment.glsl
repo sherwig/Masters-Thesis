@@ -144,15 +144,15 @@ void main() {
   //
   // finalColor.g += noiseVal;
 
-  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y)*2.0);
+  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y)*4.0+sin(uTime));
 
   // finalColor.r +=  noiseVal * 0.012;
   // finalColor.g +=  noiseVal * 0.008;
 
-  finalColor.b += noiseVal *0.016;
+  finalColor.b += noiseVal *0.0016;
 
-  // finalColor.r =0.5;
-  // finalColor.g =0.5;
+  finalColor.r =0.5;
+  finalColor.g =0.5;
 
 
   if(finalColor.r > 1.) finalColor.r = 0.;
@@ -171,8 +171,8 @@ void main() {
 
   float randomizer = random(vUvOrig);
 
-  finalColor.r =randomizer;
-  finalColor.g =randomizer;
+  // finalColor.r =randomizer;
+  // finalColor.g =randomizer;
 
   // finalColor.rgb = vec3(randomizer,randomizer,randomizer);
 
