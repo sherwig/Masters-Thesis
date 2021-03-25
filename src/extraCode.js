@@ -658,3 +658,71 @@
 //   type: "f",
 //   value: 0.75
 // },
+
+
+
+
+// SHADOWS 
+// var spotlight, lightHelper, cube;
+//
+// function addShadow() {
+//   var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+//   scene.add(ambientLight);
+//   var pointLight = new THREE.PointLight(0x444444, 1, 0);
+//   pointLight.position.set(-100, 100, 50);
+//   scene.add(pointLight);
+//
+//   // add shadow plane
+//   var planeSize = 300;
+//   var plane = new THREE.Mesh(
+//     new THREE.PlaneBufferGeometry(planeSize, planeSize),
+//     new THREE.ShadowMaterial({
+//       opacity: 0.5
+//     })
+//
+//     // new THREE.MeshStandardMaterial({
+//     //   // opacity: 0.2
+//     //   color: 0xFF0000
+//     //   // transparent: true
+//     //   // alphaMap: simpleShadow
+//     // })
+//   );
+//   plane.rotation.x = -Math.PI / 2;
+//   plane.position.set(0, -150, 0);
+//   plane.receiveShadow = true;
+//   scene.add(plane);
+//
+//
+//   const geometry = new THREE.BoxGeometry(50, 50, 50);
+//   const material = new THREE.MeshBasicMaterial({
+//     color: 0x00ff00
+//   });
+//
+//   cube = new THREE.Mesh(geometry, material);
+//   cube.position.y = -75;
+//   cube.castShadow = true;
+//   scene.add(cube);
+//
+//   // add shadow spotlight
+//   spotlight = new THREE.SpotLight(0xffffff);
+//   spotlight.position.set(0, 200, 0);
+//   spotlight.target = plane;
+//   spotlight.castShadow = true;
+//   spotlight.shadow.mapSize.width = 4096 / 12;
+//   spotlight.shadow.mapSize.height = 4096 / 12;
+//   // this.spotlight.shadow.camera.near = 500;
+//   // this.spotlight.shadow.camera.far = 4000;
+//   // this.spotlight.shadow.camera.fov = 30;
+//   spotlight.penumbra = 0.1;
+//   spotlight.decay = 2;
+//   spotlight.angle = 1;
+//   spotlight.distance = 1000;
+//   scene.add(spotlight);
+//
+//   // add light helper
+//   var spotlightDebug = true;
+//   if (spotlightDebug == true) {
+//     lightHelper = new THREE.SpotLightHelper(spotlight);
+//     scene.add(lightHelper);
+//   }
+// }

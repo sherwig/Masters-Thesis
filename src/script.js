@@ -12,8 +12,14 @@ import fboVertex from './shaders/fbo/vertex.glsl'
 import fboSpeed from './shaders/fbo/speed_frag.glsl'
 import renderFragment from './shaders/render/fragment.glsl'
 import renderVertex from './shaders/render/vertex.glsl'
+import fboMountainVertex from './shaders/fboMountains/vertex.glsl'
+import fboMountainFragment from './shaders/fboMountains/fragment.glsl'
+import renderMountainFragment from './shaders/renderMountains/fragment.glsl'
+import renderMountainVertex from './shaders/renderMountains/vertex.glsl'
 import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
+
+
 // import colorImage from '../static/textures/color.jpeg'
 
 
@@ -25,7 +31,7 @@ const scene = new THREE.Scene()
 
 const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
-var doubleBuffer, doubleSpeedBuffer;
+var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
 
 class ThreeDoubleBuffer {
@@ -164,8 +170,10 @@ function init() {
   // buildParticles();
   // seaBuilder.buildParticles();
 
-  buildDoubleBuffer();
-  bufferBuiltForSpeed();
+  // buildDoubleBuffer();
+  // bufferBuiltForSpeed();
+
+  buildMountainBuffer();
   // addShadow();
   // startAnimation();
 }
@@ -365,6 +373,63 @@ function bufferBuiltForSpeed() {
   // }
 }
 
+var mountainMaterial;
+
+function buildMountainBuffer() {
+  var offset = new THREE.Vector2(0, 0);
+  mountainMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      lastFrame: {
+        type: "t",
+        value: null
+      },
+      imgTex: {
+        type: "t",
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
+      },
+      res: {
+        type: "v2",
+        value: new THREE.Vector2(simSize, simSize)
+      },
+      speedTex: {
+        type: "t",
+        value: new THREE.TextureLoader().load('textures/noise.jpg')
+      },
+      uTime: {
+        type: "f",
+        value: 0
+      },
+      globalSpeed: {
+        type: "f",
+        value: 0.8
+      },
+      divider: {
+        type: "f",
+        value: 750
+      },
+      speedMap: {
+        type: "t",
+        value: null
+      },
+      rotAmp: {
+        type: "f",
+        value: 5.0
+      }
+    },
+    fragmentShader: fboMountainFragment
+  });
+  mountainBuffer = new ThreeDoubleBuffer(simSize, simSize, mountainMaterial, true);
+
+  // add double buffer plane to main THREE scene
+  scene.add(mountainBuffer.displayMesh);
+  mountainBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+
+  gui.add(mountainMaterial.uniforms.globalSpeed, 'value').min(0).max(2).step(0.0001).name('globalSpeed');
+  // gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
+
+  gui.add(mountainMaterial.uniforms.divider, 'value').min(0).max(1000).step(1).name('divider');
+
+}
 
 
 
@@ -450,7 +515,7 @@ class ParticleBuilder {
     // mesh.rotatation.x = Math.PI;
     this.mesh.rotation.x = Math.PI / 2;
 
-    this.mesh.castShadow = true;
+    // this.mesh.castShadow = true;
     scene.add(this.mesh);
   }
 
@@ -491,6 +556,11 @@ const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment
   surfaceColor: '#9bd8ff'
 });
 
+const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMountainFragment, renderMountainVertex, {
+  depthColor: '#186691',
+  surfaceColor: '#9bd8ff'
+});
+console.log(mountainBuilder);
 
 
 const sizes = {
@@ -498,69 +568,7 @@ const sizes = {
   height: window.innerHeight
 }
 
-// var spotlight, lightHelper, cube;
-//
-// function addShadow() {
-//   var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-//   scene.add(ambientLight);
-//   var pointLight = new THREE.PointLight(0x444444, 1, 0);
-//   pointLight.position.set(-100, 100, 50);
-//   scene.add(pointLight);
-//
-//   // add shadow plane
-//   var planeSize = 300;
-//   var plane = new THREE.Mesh(
-//     new THREE.PlaneBufferGeometry(planeSize, planeSize),
-//     new THREE.ShadowMaterial({
-//       opacity: 0.5
-//     })
-//
-//     // new THREE.MeshStandardMaterial({
-//     //   // opacity: 0.2
-//     //   color: 0xFF0000
-//     //   // transparent: true
-//     //   // alphaMap: simpleShadow
-//     // })
-//   );
-//   plane.rotation.x = -Math.PI / 2;
-//   plane.position.set(0, -150, 0);
-//   plane.receiveShadow = true;
-//   scene.add(plane);
-//
-//
-//   const geometry = new THREE.BoxGeometry(50, 50, 50);
-//   const material = new THREE.MeshBasicMaterial({
-//     color: 0x00ff00
-//   });
-//
-//   cube = new THREE.Mesh(geometry, material);
-//   cube.position.y = -75;
-//   cube.castShadow = true;
-//   scene.add(cube);
-//
-//   // add shadow spotlight
-//   spotlight = new THREE.SpotLight(0xffffff);
-//   spotlight.position.set(0, 200, 0);
-//   spotlight.target = plane;
-//   spotlight.castShadow = true;
-//   spotlight.shadow.mapSize.width = 4096 / 12;
-//   spotlight.shadow.mapSize.height = 4096 / 12;
-//   // this.spotlight.shadow.camera.near = 500;
-//   // this.spotlight.shadow.camera.far = 4000;
-//   // this.spotlight.shadow.camera.fov = 30;
-//   spotlight.penumbra = 0.1;
-//   spotlight.decay = 2;
-//   spotlight.angle = 1;
-//   spotlight.distance = 1000;
-//   scene.add(spotlight);
-//
-//   // add light helper
-//   var spotlightDebug = true;
-//   if (spotlightDebug == true) {
-//     lightHelper = new THREE.SpotLightHelper(spotlight);
-//     scene.add(lightHelper);
-//   }
-// }
+
 
 
 
@@ -596,7 +604,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.shadowMap.enabled = true;
+// renderer.shadowMap.enabled = true;
 // renderer.setClearColor(0xffffff);
 
 // function updateSimulation() {
@@ -618,9 +626,13 @@ renderer.shadowMap.enabled = true;
 function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
-  seaBuilder.setUniform("uTime", time);
-  seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
-  speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
+  // seaBuilder.setUniform("uTime", time);
+  // seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
+  // speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
+
+  mountainBuilder.setUniform("uTime", time);
+  mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
+  // mountainMaterial.uniforms["positions"].value = mountainBuffer.getTexture();
 
 
   // rotate shape
@@ -657,14 +669,17 @@ const tick = () => {
 
   updateObjects();
 
-  doubleSpeedBuffer.setUniform('uTime', time);
-  doubleSpeedBuffer.render(renderer);
+  // doubleSpeedBuffer.setUniform('uTime', time);
+  // doubleSpeedBuffer.render(renderer);
+  //
+  // doubleBuffer.setUniform('uTime', time);
+  // doubleBuffer.setUniform("speedMap", doubleSpeedBuffer.getTexture());
+  //
+  // doubleBuffer.render(renderer);
 
-  doubleBuffer.setUniform('uTime', time);
-  doubleBuffer.setUniform("speedMap", doubleSpeedBuffer.getTexture());
 
-  doubleBuffer.render(renderer);
-
+  mountainBuffer.setUniform('uTime', time);
+  mountainBuffer.render(renderer);
   // cube.rotation.x = time;
   // cube.rotation.y = time;
 
