@@ -19,16 +19,29 @@ float map(float value, float low1, float high1, float low2, float high2) {
    return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
   }
 
+  float circle(in vec2 _st, in float _radius){
+    vec2 dist = _st-vec2(0.5);
+	  return 1.-smoothstep(_radius-(_radius*0.01), _radius+(_radius*0.01), dot(dist,dist)*4.0);
+}
+
 void main() {
 
   // get map position from double buffer
   vec4 mapPosition = texture2D(positionsMap, colorUV);
-  // vec3 offsetAmp = vec3(xScale, yScale, zScale);
-  vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
+  vec3 offsetAmp = vec3(xScale, yScale, zScale);
+
+  // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
   vec3 posOffset = vec3(
    (-0.5 + mapPosition.x) * offsetAmp.x,
    (-0.5 + mapPosition.y) * offsetAmp.y,
    (-0.5 + mapPosition.z) * offsetAmp.z);
+
+   
+   //Attempt at Circle
+   // vec3 posOffset = vec3(circle(colorUv,0.9));
+
+  // vec3 posOffset = vec3(circle(mapPosition.xy,0.9),circle(mapPosition.yz,0.9),circle(mapPosition.za,0.9));
+
   // apply offset within modelViewMatrix multiplication
   // for correct inheritance of mesh position/rotation.
   // doing this afterwards was losing coordinate system rotation
