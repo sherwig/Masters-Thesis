@@ -28,7 +28,7 @@ void main() {
 
   // get map position from double buffer
   vec4 mapPosition = texture2D(positionsMap, colorUV);
-  vec3 offsetAmp = vec3(xScale, yScale, 1.0);
+  vec3 offsetAmp = vec3(xScale, yScale, zScale);
 
   // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
   vec3 posOffset = vec3(
@@ -42,15 +42,13 @@ void main() {
 
   // vec3 posOffset = vec3(circle(mapPosition.xy,0.9),circle(mapPosition.yz,0.9),circle(mapPosition.za,0.9));
 
-  // apply offset within modelViewMatrix multiplication
-  // for correct inheritance of mesh position/rotation.
-  // doing this afterwards was losing coordinate system rotation
-
   vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
   // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
 
   // wrap offsets with a fade
+  // use distance from center for mapPosition.x
+
   float scale = fullScale;
   if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));
   if(mapPosition.x < 0.2) scale = min(scale, map(mapPosition.x, 0.2, 0., scale, 0.));

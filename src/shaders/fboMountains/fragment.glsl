@@ -6,9 +6,9 @@ uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform sampler2D speedMap;
 uniform float uTime;
-uniform float rotAmp;
+uniform float xFreq;
 uniform float globalSpeed;
-uniform float divider;
+uniform float yFreq;
 #define PI 3.1415926538
 
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -125,31 +125,20 @@ void main() {
   vec2 vUv = gl_FragCoord.xy / res;
 
   vec4 lastFrame = texture2D(lastFrame, vUv);
-  // mix soomed with original
-  // vec4 finalColor = mix(lastFrame, imgColor, mixOriginal);
 
   vec4 finalColor = lastFrame; // override mix with test pattern
-
-  //instead of moving particles in a direction they should be turning
 
   //Getting out values out of our speed double buffer
   vec4 speedster = texture2D(speedMap, vUv);
 
-  // finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
-  //  float noiseZoom = 1.85;
-  // float posX = finalColor.r;
-  // float posY = finalColor.g;
-  // float noiseOffset = snoise(vec2(uTime/10. + vUvOrig.x * 0.1, uTime/10. + vUvOrig.y * 0.1));
-  // float noiseVal = snoise(vec2(noiseOffset + vUvOrig.x * 0.85 + posX * noiseZoom, noiseOffset + vUvOrig.y * 0.85 + posY * noiseZoom));
-  //
-  // finalColor.g += noiseVal;
 
-  float noiseVal = snoise(vec2(vUvOrig.x+finalColor.x,vUvOrig.y+finalColor.y)*4.0+sin(uTime));
+  // float noiseVal = snoise(vec2(vUvOrig.r+finalColor.x,vUvOrig.b+finalColor.y)*4.0+sin(uTime));
+  float noiseVal = abs(snoise(vec2((vUvOrig.x+finalColor.x)*xFreq,(vUvOrig.y+finalColor.y)*yFreq)));
 
-  // finalColor.r +=  noiseVal * 0.012;
-  // finalColor.g +=  noiseVal * 0.008;
-
-  finalColor.b += noiseVal *0.0016+sin(uTime*0.0008);
+  // finalColor.b -= noiseVal *0.0032+sin(uTime*0.00016);
+  finalColor.b = noiseVal*length(vUvOrig-0.5);
+  finalColor.b *= 1.0+ 0.4* sin(uTime*10.0 + vUvOrig.x * 10.0+ finalColor.x+noiseVal);
+  finalColor.b =smoothstep(0.1,0.9,finalColor.b);
 
   finalColor.r =0.5;
   finalColor.g =0.5;

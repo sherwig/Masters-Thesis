@@ -165,17 +165,13 @@ class ThreeDoubleBuffer {
 const simSize = 256;
 
 function init() {
-  // this.simSize = 256;
-  // this.buildColorMapFbo();
-  // buildParticles();
-  // seaBuilder.buildParticles();
 
   // buildDoubleBuffer();
   // bufferBuiltForSpeed();
 
   buildMountainBuffer();
   // addShadow();
-  // startAnimation();
+
 }
 
 class buildBuffers {
@@ -403,17 +399,17 @@ function buildMountainBuffer() {
         type: "f",
         value: 0.8
       },
-      divider: {
-        type: "f",
-        value: 750
-      },
       speedMap: {
         type: "t",
         value: null
       },
-      rotAmp: {
+      xFreq: {
         type: "f",
-        value: 5.0
+        value: 2.0
+      },
+      yFreq: {
+        type: "f",
+        value: 2.0
       }
     },
     fragmentShader: fboMountainFragment
@@ -424,23 +420,24 @@ function buildMountainBuffer() {
   scene.add(mountainBuffer.displayMesh);
   mountainBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
-  gui.add(mountainMaterial.uniforms.globalSpeed, 'value').min(0).max(2).step(0.0001).name('globalSpeed');
-  // gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
-
-  gui.add(mountainMaterial.uniforms.divider, 'value').min(0).max(1000).step(1).name('divider');
+  gui.add(mountainMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.00001).name('globalSpeed');
+  gui.add(mountainMaterial.uniforms.xFreq, 'value').min(0).max(10).step(0.1).name('xFreq');
+  gui.add(mountainMaterial.uniforms.yFreq, 'value').min(0).max(10).step(0.1).name('yFreq');
 
 }
 
 
-
 class ParticleBuilder {
-  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject) {
+  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject, positionX, positionY, positionZ) {
     this.width = width;
     this.height = height;
     this.simSize = simSize;
     this.fragmentShader = fragmentShader;
     this.vertexShader = vertexShader;
     this.debugObject = debugObject;
+    this.positionX = positionX;
+    this.positionY = positionY;
+    this.positionZ = positionZ;
     this.buildParticles();
     this.buildGui();
   }
@@ -512,6 +509,7 @@ class ParticleBuilder {
 
     this.mesh = new THREE.Mesh(this.geometry, this.particleMaterial);
     this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
+    this.mesh.position.set(this.positionX, this.positionY, this.positionZ);
     // mesh.rotatation.x = Math.PI;
     this.mesh.rotation.x = Math.PI / 2;
 
@@ -554,13 +552,16 @@ class ParticleBuilder {
 const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, {
   depthColor: '#186691',
   surfaceColor: '#9bd8ff'
-});
+}, 0, 0, 0);
 
 const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMountainFragment, renderMountainVertex, {
-  depthColor: '#186691',
-  surfaceColor: '#9bd8ff'
-});
+    depthColor: '#186691',
+    surfaceColor: '#9bd8ff'
+  },
+  0, 0, 0);
 
+// z=-300
+// y=50
 
 const sizes = {
   width: window.innerWidth,
@@ -679,8 +680,6 @@ const tick = () => {
 
   mountainBuffer.setUniform('uTime', time);
   mountainBuffer.render(renderer);
-  // cube.rotation.x = time;
-  // cube.rotation.y = time;
 
   // updateSimulation();
   // Render
