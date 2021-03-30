@@ -9,6 +9,8 @@ uniform float uTime;
 uniform float xFreq;
 uniform float globalSpeed;
 uniform float yFreq;
+uniform float noiseSpeed;
+uniform float elevation;
 #define PI 3.1415926538
 
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -135,13 +137,29 @@ void main() {
   // float noiseVal = snoise(vec2(vUvOrig.r+finalColor.x,vUvOrig.b+finalColor.y)*4.0+sin(uTime));
   float noiseVal = abs(snoise(vec2((vUvOrig.x+finalColor.x)*xFreq,(vUvOrig.y+finalColor.y)*yFreq)));
 
-  // finalColor.b -= noiseVal *0.0032+sin(uTime*0.00016);
-  finalColor.b = noiseVal*length(vUvOrig-0.5);
-  finalColor.b *= 1.0+ 0.4* sin(uTime*10.0 + vUvOrig.x * 10.0+ finalColor.x+noiseVal);
-  finalColor.b =smoothstep(0.1,0.9,finalColor.b);
+  // finalColor.b = (noiseVal*length(vUvOrig-0.5));
+  finalColor.b = 1.0-(noiseVal*length(vUvOrig)+0.3);
+  finalColor.b *= 1.0+ elevation * sin(uTime * noiseSpeed + vUvOrig.x * noiseSpeed + finalColor.x + noiseVal)* cos(uTime * noiseSpeed + vUvOrig.y * noiseSpeed + finalColor.z + noiseVal);
 
-  finalColor.r =0.5;
-  finalColor.g =0.5;
+  // finalColor.b=0.5;
+  // float stepper= smoothstep(0.9,1.0,vUvOrig.x)*smoothstep(0.9,1.0,vUvOrig.y);
+
+  // float strength = step(0.2, max(abs(vUvOrig.x - 0.5), abs(vUvOrig.y - 0.5)));
+  // finalColor.rg =smoothstep(0.0,1.0,vUvOrig.x)*smoothstep(0.0,1.0,vUvOrig.y);
+
+  for (float i=0.0; i<3.0; i++)
+  {
+    // finalColor.b-=abs(snoise(vec2(finalColor.z*0.02*i,uTime*0.03))*0.04/i);
+      // finalColor.b += sin(uTime*0.2+vUvOrig.x);
+  }
+
+  // float strength = distance(vUvOrig, vec2(0.5));
+  float strength = 1.0-step(0.6, distance(vUvOrig, vec2(0.5)) + 0.25);
+  finalColor.r =strength+0.5;
+  finalColor.g =strength+0.5;
+
+  // finalColor.r =;
+  // finalColor.g +=0.1;
 
 
   if(finalColor.r > 1.) finalColor.r = 0.;

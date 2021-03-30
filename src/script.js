@@ -166,8 +166,8 @@ const simSize = 256;
 
 function init() {
 
-  // buildDoubleBuffer();
-  // bufferBuiltForSpeed();
+  buildDoubleBuffer();
+  bufferBuiltForSpeed();
 
   buildMountainBuffer();
   // addShadow();
@@ -405,11 +405,19 @@ function buildMountainBuffer() {
       },
       xFreq: {
         type: "f",
-        value: 2.0
+        value: 3.0
       },
       yFreq: {
         type: "f",
-        value: 2.0
+        value: 3.0
+      },
+      noiseSpeed: {
+        type: "f",
+        value: 10.0
+      },
+      elevation: {
+        type: "f",
+        value: 0.4
       }
     },
     fragmentShader: fboMountainFragment
@@ -423,6 +431,8 @@ function buildMountainBuffer() {
   gui.add(mountainMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.00001).name('globalSpeed');
   gui.add(mountainMaterial.uniforms.xFreq, 'value').min(0).max(10).step(0.1).name('xFreq');
   gui.add(mountainMaterial.uniforms.yFreq, 'value').min(0).max(10).step(0.1).name('yFreq');
+  gui.add(mountainMaterial.uniforms.noiseSpeed, 'value').min(0).max(30).step(0.1).name('noiseSpeed');
+  gui.add(mountainMaterial.uniforms.elevation, 'value').min(0).max(0.9).step(0.01).name('elevation');
 
 }
 
@@ -626,9 +636,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 function updateObjects() {
   // update shader
   const time = performance.now() * 0.0001;
-  // seaBuilder.setUniform("uTime", time);
-  // seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
-  // speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
+  seaBuilder.setUniform("uTime", time);
+  seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
+  speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
 
   mountainBuilder.setUniform("uTime", time);
   mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
@@ -669,13 +679,13 @@ const tick = () => {
 
   updateObjects();
 
-  // doubleSpeedBuffer.setUniform('uTime', time);
-  // doubleSpeedBuffer.render(renderer);
-  //
-  // doubleBuffer.setUniform('uTime', time);
-  // doubleBuffer.setUniform("speedMap", doubleSpeedBuffer.getTexture());
-  //
-  // doubleBuffer.render(renderer);
+  doubleSpeedBuffer.setUniform('uTime', time);
+  doubleSpeedBuffer.render(renderer);
+
+  doubleBuffer.setUniform('uTime', time);
+  doubleBuffer.setUniform("speedMap", doubleSpeedBuffer.getTexture());
+
+  doubleBuffer.render(renderer);
 
 
   mountainBuffer.setUniform('uTime', time);

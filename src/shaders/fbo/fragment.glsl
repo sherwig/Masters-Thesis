@@ -36,7 +36,17 @@ void main() {
   //Getting out values out of our speed double buffer
   vec4 speedster = texture2D(speedMap, vUv);
 
+
+  // finalColor.b = length(vUvOrig-0.5);
+
+  // float strength = 1.0-step(0.5, distance(vUvOrig, vec2(0.5)) + 0.25);
+  // finalColor.r = strength;
+  // finalColor.b =strength;
+
+
   finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
+
+
 
 
   // finalColor.b =0.5;
