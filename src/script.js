@@ -16,6 +16,10 @@ import fboMountainVertex from './shaders/fboMountains/vertex.glsl'
 import fboMountainFragment from './shaders/fboMountains/fragment.glsl'
 import renderMountainFragment from './shaders/renderMountains/fragment.glsl'
 import renderMountainVertex from './shaders/renderMountains/vertex.glsl'
+import moonFragment from './shaders/moon/fragment.glsl'
+import moonVertex from './shaders/moon/vertex.glsl'
+import fireflyFragment from './shaders/fireflies/fragment.glsl'
+import fireflyVertex from './shaders/fireflies/vertex.glsl'
 import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
 
@@ -32,6 +36,11 @@ const scene = new THREE.Scene()
 const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
+
+//Background Color
+const backgroundColor = {
+
+}
 
 
 class ThreeDoubleBuffer {
@@ -570,6 +579,70 @@ const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMou
   },
   0, 0, 0);
 
+const moonGeometry = new THREE.SphereGeometry(15, 32, 32);
+// const material = new THREE.MeshBasicMaterial({
+//   color: 0xffff00
+// });
+const moonMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+
+    uTime: {
+      value: 1.0
+    }
+
+  },
+  vertexShader: moonVertex,
+  fragmentShader: moonFragment
+
+})
+const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+moon.position.set(0, 200, -200);
+scene.add(moon);
+
+
+const firefliesGeometry = new THREE.BufferGeometry()
+const firefliesCount = 3000
+const positionArray = new Float32Array(firefliesCount * 3)
+const scaleArray = new Float32Array(firefliesCount)
+
+for (let i = 0; i < firefliesCount; i++) {
+  positionArray[i * 3 + 0] = (Math.random() - 0.5) * 300
+  positionArray[i * 3 + 1] = Math.random() * 150
+  positionArray[i * 3 + 2] = (Math.random() - 0.5) * 300
+
+  scaleArray[i] = Math.random()
+}
+
+firefliesGeometry.setAttribute('position', new THREE.BufferAttribute(positionArray, 3))
+firefliesGeometry.setAttribute('aScale', new THREE.BufferAttribute(scaleArray, 1))
+
+// Material
+const firefliesMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: {
+      value: 0
+    },
+    uPixelRatio: {
+      value: Math.min(window.devicePixelRatio, 2)
+    },
+    uSize: {
+      value: 600
+    }
+  },
+  vertexShader: fireflyVertex,
+  fragmentShader: fireflyFragment,
+  transparent: true,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+})
+
+gui.add(firefliesMaterial.uniforms.uSize, 'value').min(0).max(3000).step(1).name('firefliesSize')
+
+// Points
+const fireflies = new THREE.Points(firefliesGeometry, firefliesMaterial)
+fireflies.position.set(0, 100, 0);
+scene.add(fireflies)
+
 // z=-300
 // y=50
 
@@ -614,6 +687,12 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+backgroundColor.clearColor = '#12152f';
+renderer.setClearColor(backgroundColor.clearColor)
+gui.addColor(backgroundColor, 'clearColor').onChange(() => {
+  renderer.setClearColor(backgroundColor.clearColor)
+});
 // renderer.shadowMap.enabled = true;
 // renderer.setClearColor(0xffffff);
 
@@ -631,6 +710,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 //
 //   // }
 // }
+
+
+
 
 
 function updateObjects() {
@@ -673,6 +755,9 @@ const tick = () => {
 
   //update material
   // material.uniforms.uTime.value = elapsedTime;
+  moonMaterial.uniforms.uTime.value = time;
+  firefliesMaterial.uniforms.uTime.value = elapsedTime;
+
 
   // Update controls
   controls.update()
@@ -690,6 +775,11 @@ const tick = () => {
 
   mountainBuffer.setUniform('uTime', time);
   mountainBuffer.render(renderer);
+
+
+
+  // sphere.position.x = Math.cos(time * 0.4);
+  // sphere.position.z = Math.sin(time * 0.4);
 
   // updateSimulation();
   // Render
