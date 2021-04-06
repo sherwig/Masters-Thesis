@@ -3,6 +3,8 @@ varying float vElevation;
 uniform vec2 u_resolution;
 uniform float uTime;
 varying vec3 vUv;
+uniform vec3 uSurfaceColor;
+uniform vec3 uDepthColor;
 
 
 vec4 permute(vec4 x)
@@ -99,9 +101,11 @@ void main() {
     // vec3 color = mix(surfaceColor, depthColor,mixStrength);
 
     float strength = step(0.9, sin(cnoise(vUv * 0.4+uTime*3.0) * 5.0));
-    vec3 blackColor = vec3(0.0);
-    vec3 uvColor = vec3(0.7,0.3,1.0);
-    vec3 mixedColor = mix(blackColor, uvColor, strength);
+    // vec3 blackColor = vec3(0.0);
+    // vec3 uvColor = vec3(0.7,0.3,1.0);
+
+
+    vec3 mixedColor = mix(uDepthColor, uSurfaceColor, strength);
 
     // float strength = cnoise(vUv * 0.4);
 

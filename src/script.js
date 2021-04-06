@@ -579,7 +579,14 @@ const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMou
   },
   0, 0, 0);
 
-const moonGeometry = new THREE.SphereGeometry(15, 32, 32);
+
+const moonDebug = {
+  depthColor: '#000000',
+  surfaceColor: '#8A2BE2'
+}
+
+
+const moonGeometry = new THREE.SphereGeometry(30, 32, 32);
 // const material = new THREE.MeshBasicMaterial({
 //   color: 0xffff00
 // });
@@ -588,7 +595,13 @@ const moonMaterial = new THREE.ShaderMaterial({
 
     uTime: {
       value: 1.0
-    }
+    },
+    uDepthColor: {
+      value: new THREE.Color(moonDebug.depthColor)
+    },
+    uSurfaceColor: {
+      value: new THREE.Color(moonDebug.surfaceColor)
+    },
 
   },
   vertexShader: moonVertex,
@@ -599,6 +612,14 @@ const moon = new THREE.Mesh(moonGeometry, moonMaterial);
 moon.position.set(0, 200, -200);
 scene.add(moon);
 
+
+gui.addColor(moonDebug, 'depthColor').name('moonDepth').onChange(() => {
+  moonMaterial.uniforms.uDepthColor.value.set(moonDebug.depthColor)
+});
+
+gui.addColor(moonDebug, 'surfaceColor').name('moonSurface').onChange(() => {
+  moonMaterial.uniforms.uSurfaceColor.value.set(moonDebug.surfaceColor)
+});
 
 const firefliesGeometry = new THREE.BufferGeometry()
 const firefliesCount = 3000
