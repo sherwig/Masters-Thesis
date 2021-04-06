@@ -606,9 +606,9 @@ const positionArray = new Float32Array(firefliesCount * 3)
 const scaleArray = new Float32Array(firefliesCount)
 
 for (let i = 0; i < firefliesCount; i++) {
-  positionArray[i * 3 + 0] = (Math.random() - 0.5) * 300
+  positionArray[i * 3 + 0] = (Math.random() - 0.5) * 800
   positionArray[i * 3 + 1] = Math.random() * 150
-  positionArray[i * 3 + 2] = (Math.random() - 0.5) * 300
+  positionArray[i * 3 + 2] = (Math.random() - 0.5) * 800
 
   scaleArray[i] = Math.random()
 }
@@ -626,7 +626,7 @@ const firefliesMaterial = new THREE.ShaderMaterial({
       value: Math.min(window.devicePixelRatio, 2)
     },
     uSize: {
-      value: 600
+      value: 2800
     }
   },
   vertexShader: fireflyVertex,
@@ -636,11 +636,11 @@ const firefliesMaterial = new THREE.ShaderMaterial({
   depthWrite: false
 })
 
-gui.add(firefliesMaterial.uniforms.uSize, 'value').min(0).max(3000).step(1).name('firefliesSize')
+gui.add(firefliesMaterial.uniforms.uSize, 'value').min(0).max(5000).step(1).name('firefliesSize')
 
 // Points
 const fireflies = new THREE.Points(firefliesGeometry, firefliesMaterial)
-fireflies.position.set(0, 100, 0);
+fireflies.position.set(0, 200, 0);
 scene.add(fireflies)
 
 // z=-300

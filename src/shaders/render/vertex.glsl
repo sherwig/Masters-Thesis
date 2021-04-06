@@ -15,13 +15,13 @@ varying float vScale;
 varying vec2 vColorUV;
 varying float vElevation;
 
-float map(float value, float low1, float high1, float low2, float high2) {
-   return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
-  }
+float map(float value, float low1, float high1, float low2, float high2){
+  return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+}
 
-  float circle(in vec2 _st, in float _radius){
-    vec2 dist = _st-vec2(0.5);
-	  return 1.-smoothstep(_radius-(_radius*0.01), _radius+(_radius*0.01), dot(dist,dist)*4.0);
+float circle(in vec2 _st, in float _radius){
+  vec2 dist = _st-vec2(0.5);
+	return 1.-smoothstep(_radius-(_radius*0.01), _radius+(_radius*0.01), dot(dist,dist)*4.0);
 }
 
 void main() {
@@ -36,7 +36,12 @@ void main() {
    (-0.5 + mapPosition.y) * offsetAmp.y,
    (-0.5 + mapPosition.z) * offsetAmp.z);
 
-   
+
+
+   // float strength = 1.0-step(0.5, distance(colorUV, vec2(0.5)) + 0.25);
+   // finalColor.r = strength;
+   // finalColor.b =strength;
+
    //Attempt at Circle
    // vec3 posOffset = vec3(circle(colorUv,0.9));
 
@@ -52,12 +57,28 @@ void main() {
 
   // wrap offsets with a fade
   float scale = fullScale;
-  if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));
-  if(mapPosition.x < 0.2) scale = min(scale, map(mapPosition.x, 0.2, 0., scale, 0.));
-  if(mapPosition.y > 0.8) scale = min(scale, map(mapPosition.y, 0.8, 1., scale, 0.));
-  if(mapPosition.y < 0.2) scale = min(scale, map(mapPosition.y, 0.2, 0., scale, 0.));
+
+  float dist = distance(mapPosition.xy, vec2(0.5));
+
+  // if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));
+  // if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
+
+  // if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));
+  // if(mapPosition.x < 0.2) scale = min(scale, map(mapPosition.x, 0.2, 0., scale, 0.));
+  // if(mapPosition.y > 0.8) scale = min(scale, map(mapPosition.y, 0.8, 1., scale, 0.));
+  // if(mapPosition.y < 0.2) scale = min(scale, map(mapPosition.y, 0.2, 0., scale, 0.));
   if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
   if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
+
+
+  if (dist>0.2)
+  {
+    scale=map(dist,0.2,0.3,scale,0.0);
+    if(scale <0.)
+    {
+      scale=0.;
+    }
+  }
 
   // set final vert position
   mvPosition.xyz += (position + posOffset) * scale;
