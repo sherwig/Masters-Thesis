@@ -44,10 +44,11 @@ void main() {
   // finalColor.b =strength;
 
 
+  //CURL NOISE
   finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
 
-
-
+  //PERLIN
+  // finalColor.rgb = speedster.rgb *globalSpeed;
 
   // finalColor.b =0.5;
 

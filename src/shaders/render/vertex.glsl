@@ -30,12 +30,14 @@ void main() {
   vec4 mapPosition = texture2D(positionsMap, colorUV);
   vec3 offsetAmp = vec3(xScale, yScale, zScale);
 
-  // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
   // vec3 posOffset = vec3(
   //  (-0.5 + mapPosition.x) * offsetAmp.x,
   //  (-0.5 + mapPosition.y) * offsetAmp.y,
   //  (-0.5 + mapPosition.z) * offsetAmp.z);
 
+
+
+// CURL
   vec3 posOffset = vec3(
    (-0.5 + mapPosition.x) * 2.8,
    (-0.5 + mapPosition.y) * 2.8,

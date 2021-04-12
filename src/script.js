@@ -180,7 +180,6 @@ function init() {
 
   buildDoubleBuffer();
   bufferBuiltForSpeed();
-
   buildMountainBuffer();
   // addShadow();
 
