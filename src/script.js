@@ -20,8 +20,11 @@ import moonFragment from './shaders/moon/fragment.glsl'
 import moonVertex from './shaders/moon/vertex.glsl'
 import fireflyFragment from './shaders/fireflies/fragment.glsl'
 import fireflyVertex from './shaders/fireflies/vertex.glsl'
+import backgroundFragment from './shaders/background/fragment.glsl'
+import backgroundVertex from './shaders/background/vertex.glsl'
 import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
+
 
 
 // import colorImage from '../static/textures/color.jpeg'
@@ -422,11 +425,11 @@ function buildMountainBuffer() {
       },
       noiseSpeed: {
         type: "f",
-        value: 10.0
+        value: 3.0
       },
       elevation: {
         type: "f",
-        value: 0.4
+        value: 0.8
       }
     },
     fragmentShader: fboMountainFragment
@@ -574,8 +577,8 @@ const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment
 }, 0, 0, 0);
 
 const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMountainFragment, renderMountainVertex, {
-    depthColor: '#186691',
-    surfaceColor: '#9bd8ff'
+    depthColor: '#26a1f0',
+    surfaceColor: '#050822'
   },
   0, 0, 0);
 
@@ -647,7 +650,7 @@ const firefliesMaterial = new THREE.ShaderMaterial({
       value: Math.min(window.devicePixelRatio, 2)
     },
     uSize: {
-      value: 2800
+      value: 1400
     }
   },
   vertexShader: fireflyVertex,
@@ -662,7 +665,33 @@ gui.add(firefliesMaterial.uniforms.uSize, 'value').min(0).max(5000).step(1).name
 // Points
 const fireflies = new THREE.Points(firefliesGeometry, firefliesMaterial)
 fireflies.position.set(0, 200, 0);
-scene.add(fireflies)
+scene.add(fireflies);
+
+
+// const geometry = new THREE.SphereGeometry(5, 32, 32);
+//
+//
+// const sphere = new THREE.Mesh(geometry, material);
+// scene.add(sphere);
+
+const spheregeom = new THREE.SphereGeometry(3000, 64, 64);
+const sphereMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: {
+      value: 0
+    }
+  },
+  fragmentShader: backgroundFragment,
+  vertexShader: backgroundVertex,
+  // transparent: true,
+  blending: THREE.AdditiveBlending,
+  side: THREE.DoubleSide
+  // blending: THREE.NormalBlending,
+});
+
+const backgroundSphere = new THREE.Mesh(spheregeom, sphereMaterial);
+scene.add(backgroundSphere);
+
 
 // z=-300
 // y=50
@@ -691,8 +720,8 @@ window.addEventListener('resize', () => {
 })
 
 
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000)
-scene.add(camera)
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000);
+scene.add(camera);
 camera.position.set(0, 0, 400);
 // camera.lookAt(scene.position);
 
@@ -706,33 +735,17 @@ controls.enableDamping = true;
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-backgroundColor.clearColor = '#12152f';
-renderer.setClearColor(backgroundColor.clearColor)
-gui.addColor(backgroundColor, 'clearColor').onChange(() => {
-  renderer.setClearColor(backgroundColor.clearColor)
-});
+// backgroundColor.clearColor = '#12152f';
+//
+// renderer.setClearColor(backgroundColor.clearColor)
+// gui.addColor(backgroundColor, 'clearColor').onChange(() => {
+//   renderer.setClearColor(backgroundColor.clearColor)
+// });
 // renderer.shadowMap.enabled = true;
 // renderer.setClearColor(0xffffff);
-
-// function updateSimulation() {
-//   // update uniforms & re-render double buffer
-//   // for(let i=0; i < 5; i++) {
-//   doubleBuffer.setUniform('time', _frameLoop.count(0.001));
-//   // this.doubleBuffer.setUniform('rotation', _frameLoop.osc(0.03, -0.003, 0.003));
-//   // this.doubleBuffer.setUniform('zoom', _frameLoop.osc(0.02, 0.998, 1.004));
-//   // this.offset.x = _frameLoop.osc(0.01, -0.001, 0.001);
-//   // this.offset.y = 0.001;// _frameLoop.osc(0.01, -0.002, 0.002);
-//   doubleBuffer.setUniform('mixOriginal', _frameLoop.osc(0.03, 0, 0.004));
-//   doubleBuffer.render(this.threeScene.getRenderer(), this.debugRenderer);
-//
-//
-//   // }
-// }
-
-
 
 
 
@@ -746,21 +759,7 @@ function updateObjects() {
   mountainBuilder.setUniform("uTime", time);
   mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
   // mountainMaterial.uniforms["positions"].value = mountainBuffer.getTexture();
-
-
-  // rotate shape
   const cameraAmp = 2;
-  // if (!this.cameraXEase) { // lazy init rotation lerping
-  //   cameraXEase = new EasingFloat(0, 0.08, 0.00001);
-  //   cameraYEase = new EasingFloat(0, 0.08, 0.00001);
-  // }
-  // cameraYEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.xNorm(this.el)).update();
-  // cameraXEase.setTarget(-cameraAmp + cameraAmp * 2 * this.pointerPos.yNorm(this.el)).update();
-  // mesh.rotation.x = this.cameraXEase.value();
-  // mesh.rotation.y = this.cameraYEase.value();
-
-  // move camera z
-  // this.mesh.position.set(0, 0, 0 + 200 * Math.sin(time*2));
 }
 
 
@@ -778,6 +777,7 @@ const tick = () => {
   // material.uniforms.uTime.value = elapsedTime;
   moonMaterial.uniforms.uTime.value = time;
   firefliesMaterial.uniforms.uTime.value = elapsedTime;
+  sphereMaterial.uniforms.uTime.value = elapsedTime;
 
 
   // Update controls

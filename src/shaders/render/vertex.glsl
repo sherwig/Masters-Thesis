@@ -31,10 +31,15 @@ void main() {
   vec3 offsetAmp = vec3(xScale, yScale, zScale);
 
   // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
+  // vec3 posOffset = vec3(
+  //  (-0.5 + mapPosition.x) * offsetAmp.x,
+  //  (-0.5 + mapPosition.y) * offsetAmp.y,
+  //  (-0.5 + mapPosition.z) * offsetAmp.z);
+
   vec3 posOffset = vec3(
-   (-0.5 + mapPosition.x) * offsetAmp.x,
-   (-0.5 + mapPosition.y) * offsetAmp.y,
-   (-0.5 + mapPosition.z) * offsetAmp.z);
+   (-0.5 + mapPosition.x) * 2.8,
+   (-0.5 + mapPosition.y) * 2.8,
+   (-0.5 + mapPosition.z) * 0.2);
 
 
 
@@ -74,9 +79,9 @@ void main() {
   if (dist>0.2)
   {
     scale=map(dist,0.2,0.3,scale,0.0);
-    if(scale <0.)
+    if(scale <0.0)
     {
-      scale=0.;
+      scale=0.0;
     }
   }
 
