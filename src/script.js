@@ -181,6 +181,7 @@ function init() {
   buildDoubleBuffer();
   bufferBuiltForSpeed();
   buildMountainBuffer();
+  // buildVortex();
   // addShadow();
 
 }
@@ -566,6 +567,117 @@ class ParticleBuilder {
 
 }
 
+// pseudo code for VORTEX
+//Build the particles with UV and positions
+//Add randomness around the plane in x and y do cirlce in Vertex Render Shader
+
+
+// const parameters = {}
+// parameters.count = 200000
+// parameters.size = 0.005
+// parameters.radius = 5
+// parameters.branches = 3
+// parameters.spin = 1
+// parameters.randomness = 0.5
+// parameters.randomnessPower = 3
+// parameters.insideColor = '#ff6030'
+// parameters.outsideColor = '#1b3984'
+//
+// let geometryVortex;
+// let materialVortex;
+// let vortex;
+//
+// function buildVortex() {
+//   geometryVortex = new THREE.PlaneBufferGeometry()
+//
+//   const positions = new Float32Array(parameters.count * 3)
+//   const colors = new Float32Array(parameters.count * 3)
+//   const scales = new Float32Array(parameters.count * 1)
+//   const randomness = new Float32Array(parameters.count * 3)
+//
+//   const insideColor = new THREE.Color(parameters.insideColor)
+//   const outsideColor = new THREE.Color(parameters.outsideColor)
+//
+//   for (let i = 0; i < parameters.count; i++) {
+//     const i3 = i * 3
+//
+//     // Position
+//     const radius = Math.random() * parameters.radius
+//
+//     const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
+//     positions[i3] = Math.cos(branchAngle) * radius
+//     positions[i3 + 1] = 0.0
+//     positions[i3 + 2] = Math.sin(branchAngle) * radius
+//
+//     //randomness
+//     const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
+//     const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
+//     const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
+//     randomness[i3] = randomX
+//     randomness[i3 + 1] = randomY
+//     randomness[i3 + 2] = randomZ
+//
+//
+//     // Color
+//     const mixedColor = insideColor.clone()
+//     mixedColor.lerp(outsideColor, radius / parameters.radius)
+//
+//     colors[i3] = mixedColor.r
+//     colors[i3 + 1] = mixedColor.g
+//     // colors[i3 + 2] = mixedColor.b
+//
+//     //scale
+//     scales[i] = Math.random();
+//   }
+//
+//   // geometryVortex.setAttribute('translate', new THREE.InstancedBufferAttribute(this.translateArray, 3));
+//   // geometryVortex.setAttribute('colorUV', new THREE.InstancedBufferAttribute(this.colorUVArray, 2));
+//
+//   geometryVortex.setAttribute('translate', new THREE.BufferAttribute(positions, 3))
+//   geometryVortex.setAttribute('colorUV', new THREE.BufferAttribute(colors, 2))
+//   geometryVortex.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
+//   geometryVortex.setAttribute('aRandomness', new THREE.BufferAttribute(randomness, 3))
+//
+//
+//
+//   materialVortex = new THREE.ShaderMaterial({
+//     depthWrite: false,
+//     blending: THREE.AdditiveBlending,
+//     vertexColors: true,
+//     vertexShader: renderFragment,
+//     fragmentShader: renderVertex,
+//     uniforms: {
+//       uTime: {
+//         value: 0
+//       },
+//       uSize: {
+//         value: 30 * renderer.getPixelRatio()
+//       },
+//       positionsMap: {
+//         value: null
+//       },
+//       map: {
+//         value: new THREE.TextureLoader().load('textures/circle.png')
+//       },
+//       uDepthColor: {
+//         value: new THREE.Color(parameters.insideColor)
+//       },
+//       uSurfaceColor: {
+//         value: new THREE.Color(parameters.outsideColor)
+//       }
+//     }
+//
+//   })
+//
+//   /**
+//    * Points
+//    */
+//   vortex = new THREE.Points(geometryVortex, materialVortex)
+//   scene.add(vortex)
+//
+// }
+
+
 // const debugObject = {};
 // debugObject.depthColor = '#186691';
 // debugObject.surfaceColor = '#9bd8ff';
@@ -673,7 +785,7 @@ scene.add(fireflies);
 // const sphere = new THREE.Mesh(geometry, material);
 // scene.add(sphere);
 
-const spheregeom = new THREE.SphereGeometry(3000, 64, 64);
+const spheregeom = new THREE.SphereGeometry(3000, 128, 128);
 const sphereMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: {
@@ -753,6 +865,8 @@ function updateObjects() {
   const time = performance.now() * 0.0001;
   seaBuilder.setUniform("uTime", time);
   seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
+  // materialVortex.uniforms["positionsMap"].value = doubleBuffer.getTexture();
+
   speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
 
   mountainBuilder.setUniform("uTime", time);
@@ -777,6 +891,7 @@ const tick = () => {
   moonMaterial.uniforms.uTime.value = time;
   firefliesMaterial.uniforms.uTime.value = elapsedTime;
   sphereMaterial.uniforms.uTime.value = elapsedTime;
+  // materialVortex.uniforms.uTime.value = elapsedTime;
 
 
   // Update controls

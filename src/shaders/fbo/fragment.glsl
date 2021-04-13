@@ -45,12 +45,14 @@ void main() {
 
 
   //CURL NOISE
-  finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
+  // finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
 
   //PERLIN
   // finalColor.rgb = speedster.rgb *globalSpeed;
 
-  // finalColor.b =0.5;
+  //VORTEX
+  finalColor.rg +=(speedster.rg*0.02);
+  finalColor.b =0.5;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

@@ -63,7 +63,6 @@ void main() {
   vec4 speedster = texture2D(speedMap, vUv);
 
 
-  // float noiseVal = snoise(vec2(vUvOrig.r+finalColor.x,vUvOrig.b+finalColor.y)*4.0+sin(uTime));
   float noiseVal = abs(snoise(vec2((vUvOrig.x+finalColor.x)*xFreq,(vUvOrig.y+finalColor.y)*yFreq)));
 
   finalColor.b = 1.0-(noiseVal*length(vUvOrig)+0.2);
@@ -72,30 +71,8 @@ void main() {
   // finalColor.b *= 1.0+ elevation * sin(uTime * noiseSpeed + vUvOrig.x * noiseSpeed + finalColor.x + noiseVal);
 
 
-  for (float i=0.0; i<3.0; i++)
-  {
-    // finalColor.b-=abs(snoise(vec2(finalColor.z*0.02*i,uTime*0.03))*0.04/i);
-      // finalColor.b += sin(uTime*0.2+vUvOrig.x);
-  }
-
-  // float strength = distance(vUvOrig, vec2(0.5));
-  float x = smoothstep(0.0,1.0,vUvOrig.x);
-  // finalColor.r = x;
-
-  float y = smoothstep(0.0,1.0,vUvOrig.y);
-  // finalColor.g = y;
-
-  // float strength = 1.0-step(0.6, distance(vUvOrig, vec2(0.5)) + 0.25);
-
-
-  // vec2 strength = 1.0-smoothstep(0.0,1.0, vec2(distance(vUvOrig, vec2(0.5))+0.25 ));
-  float strength = 1.0-step(0.6, distance(vUvOrig, vec2(0.5)) + 0.25);
-  finalColor.r =strength+0.5;
-  finalColor.g =strength+0.5;
-
-
-
-
+  finalColor.r =0.5;
+  finalColor.g =0.5;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

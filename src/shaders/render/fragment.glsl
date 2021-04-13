@@ -4,8 +4,8 @@ precision highp float;
   uniform vec3 uSurfaceColor;
   uniform vec3 uDepthColor;
   varying vec2 vUv;
-  varying float vScale;
-  varying vec2 vColorUV;
+  // varying float vScale;
+  // varying vec2 vColorUV;
   varying float vElevation;
 
   //

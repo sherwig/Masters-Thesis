@@ -59,18 +59,22 @@ void main() {
 
 
 
-    float dist = distance(mapPosition.xy, vec2(0.5));
+    float dist = distance(mvPosition.xy, vec2(0.0));
     if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
     if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
 
-    if (dist>0.2)
+
+    if (dist<200.0)
     {
-      scale=map(dist,0.2,0.3,scale,0.0);
-      if(scale <0.)
+      scale=map(dist,200.0,100.0,scale,0.0);
+      // scale=0.0;
+      if(scale <0.0)
       {
-        scale=0.;
+        scale=0.0;
       }
     }
+
+
 
   // set final vert position
   mvPosition.xyz += (position + posOffset) * scale;
