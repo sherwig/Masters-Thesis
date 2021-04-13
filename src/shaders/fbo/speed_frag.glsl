@@ -109,28 +109,25 @@ void main() {
 
   vec4 positionsMap = texture2D(positions, vUv);
 
-
   vec4 finalColor = lastFrame; // override mix with test pattern
 
-
   //VORTEX
-  float angle = atan(positionsMap.x,positionsMap.z);
-  float distanceToCenter = length(positionsMap.xz);
-
-  float angleOffset = (1.0/distanceToCenter)*uTime*0.2;
-
-  angle+=angleOffset;
-
-  positionsMap.x = cos(angle)*distanceToCenter;
-  positionsMap.z = sin(angle)*distanceToCenter;
-
-
-  finalColor.rgb = positionsMap.xyz;
+  // float angle = atan(positionsMap.x,positionsMap.z);
+  // // float distanceToCenter = length(positionsMap.xz);
+  // float distanceToCenter = distance(positionsMap.xz+vUvOrig, vec2(0.5));
+  //
+  // float angleOffset = (1.0/distanceToCenter)*uTime;
+  //
+  // angle+=angleOffset*0.001;
+  //
+  // positionsMap.x = cos(angle)*distanceToCenter;
+  // positionsMap.z = sin(angle)*distanceToCenter;
+  //
+  // finalColor.rgb = positionsMap.xyz;
 
   // positionsMap.x+=100.0;
   // positionsMap.y+=100.0;
   // positionsMap.z+=100.0;
-
 
   //PERLIN
   // vec2 displacedUV = vUvOrig + cnoise(vec3(vUvOrig.x*5.0, vUvOrig.y*5.0, uTime*0.1));
@@ -138,8 +135,6 @@ void main() {
   // float outerGlow = 1.0-distance(vUvOrig, vec2(0.5)) * 5.0 ;
   // strength+=outerGlow;
   // finalColor.rgb = vec3(strength);
-
-
 
   // CURL NOISE
   // vec3 placeholder = vec3(0.5,0.5,0.5);

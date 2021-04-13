@@ -44,6 +44,22 @@ void main() {
   // finalColor.b =strength;
 
 
+  //VORTEX
+  float angle = atan(lastFrame.x,lastFrame.z);
+  float distanceToCenter = length(lastFrame.xz);
+  // float distanceToCenter = distance(finalColor.xz, vec2(0.5));
+  float angleOffset = (1.0/distanceToCenter)*uTime;
+  // angle+=angleOffset;
+  angle+=.1;
+  lastFrame.x = cos(angle)*distanceToCenter;
+  lastFrame.z = sin(angle)*distanceToCenter;
+
+  // finalColor.xyz = lastFrame.xyz;
+  finalColor.x = lastFrame.x;
+  finalColor.y = lastFrame.z;
+  finalColor.z =0.5;
+
+
   //CURL NOISE
   // finalColor.rgb += ((-0.5+speedster.rgb) / divider)*globalSpeed;
 
@@ -51,8 +67,8 @@ void main() {
   // finalColor.rgb = speedster.rgb *globalSpeed;
 
   //VORTEX
-  finalColor.rg +=(speedster.rg*0.02);
-  finalColor.b =0.5;
+  // finalColor.rg =speedster.rg;
+  // finalColor.b =0.5;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;
@@ -68,7 +84,7 @@ void main() {
   // if(finalColor.g <= 0.) finalColor.g = .5;
   // if(finalColor.b <= 0.) finalColor.b = .5;
 
-  float randomizer = random(vUvOrig);
+  // float randomizer = random(vUvOrig);
 
   // if(finalColor.r >= 1.) finalColor.r = randomizer;
   // if(finalColor.g >= 1.) finalColor.g = randomizer;
