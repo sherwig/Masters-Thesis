@@ -27,37 +27,29 @@ void main() {
 
   vec4 lastFrame = texture2D(lastFrame, vUv);
   // mix soomed with original
-  // vec4 finalColor = mix(lastFrame, imgColor, mixOriginal);
 
   vec4 finalColor = lastFrame; // override mix with test pattern
-
-  //instead of moving particles in a direction they should be turning
 
   //Getting out values out of our speed double buffer
   vec4 speedster = texture2D(speedMap, vUv);
 
-
-  // finalColor.b = length(vUvOrig-0.5);
-
-  // float strength = 1.0-step(0.5, distance(vUvOrig, vec2(0.5)) + 0.25);
-  // finalColor.r = strength;
-  // finalColor.b =strength;
-
-
   //VORTEX
-  float angle = atan(lastFrame.x,lastFrame.z);
-  float distanceToCenter = length(lastFrame.xz);
-  // float distanceToCenter = distance(finalColor.xz, vec2(0.5));
-  float angleOffset = (1.0/distanceToCenter)*uTime;
+  // float angle = atan(lastFrame.r,lastFrame.g);
+  // float distanceToCenter = length(lastFrame.rg);
+  // // float distanceToCenter = distance(finalColor.xz, vec2(0.5));
+  // float angleOffset = (1.0/distanceToCenter)*uTime*0.002;
   // angle+=angleOffset;
-  angle+=.1;
-  lastFrame.x = cos(angle)*distanceToCenter;
-  lastFrame.z = sin(angle)*distanceToCenter;
+  // // angle+=0.0001;
+  // lastFrame.r =0.5+0.5*cos(angle)*distanceToCenter;
+  // lastFrame.g =0.5+0.5*sin(angle)*distanceToCenter;
+  //
+  // finalColor.rg = lastFrame.rg;
+  // finalColor.b = 0.5;
 
-  // finalColor.xyz = lastFrame.xyz;
-  finalColor.x = lastFrame.x;
-  finalColor.y = lastFrame.z;
-  finalColor.z =0.5;
+ lastFrame.x = 0.5 + 0.5 * cos(uTime*2.0 + vUvOrig.x)*vUvOrig.y;
+ lastFrame.y = 0.5 + 0.5 * sin(uTime*2.0 + vUvOrig.x)*vUvOrig.y;
+ finalColor.rg = lastFrame.xy;
+ finalColor.b=0.5;
 
 
   //CURL NOISE
@@ -77,21 +69,6 @@ void main() {
   if(finalColor.g < 0.) finalColor.g = 1.;
   if(finalColor.b < 0.) finalColor.b = 1.;
 
-  // if(finalColor.r >= 1.) finalColor.r = 0.5;
-  // if(finalColor.g >= 1.) finalColor.g = 0.5;
-  // if(finalColor.b >= 1.) finalColor.b = 0.5;
-  // if(finalColor.r <= 0.) finalColor.r = .5;
-  // if(finalColor.g <= 0.) finalColor.g = .5;
-  // if(finalColor.b <= 0.) finalColor.b = .5;
-
-  // float randomizer = random(vUvOrig);
-
-  // if(finalColor.r >= 1.) finalColor.r = randomizer;
-  // if(finalColor.g >= 1.) finalColor.g = randomizer;
-  // if(finalColor.b >= 1.) finalColor.b = randomizer;
-  // if(finalColor.r <= 0.) finalColor.r = randomizer;
-  // if(finalColor.g <= 0.) finalColor.g = randomizer;
-  // if(finalColor.b <= 0.) finalColor.b = randomizer;
 
   // set final color
   gl_FragColor = finalColor;

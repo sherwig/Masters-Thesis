@@ -294,6 +294,7 @@ function buildDoubleBuffer() {
   // add double buffer plane to main THREE scene
   scene.add(doubleBuffer.displayMesh);
   doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  doubleBuffer.displayMesh.position.set(60, 0, 0);
 
   gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(2).step(0.0001).name('globalSpeed');
   // gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
@@ -360,25 +361,11 @@ function bufferBuiltForSpeed() {
   // add double buffer plane to main THREE scene
   scene.add(doubleSpeedBuffer.displayMesh);
   doubleSpeedBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
-  doubleSpeedBuffer.displayMesh.position.set(60, 0, 0);
+  doubleSpeedBuffer.displayMesh.position.set(-60, 0, 0);
 
   gui.add(speedMaterial.uniforms.mapDivider, 'value').min(0).max(10).step(0.1).name('speedDivider');
   gui.add(speedMaterial.uniforms.offsetSpeed, 'value').min(0).max(3).step(0.01).name('offsetSpeed');
 
-
-
-
-  // add debug rednerer & add to DOM
-  // if (debugRender) {
-  //   debugRenderer = new THREE.WebGLRenderer({
-  //     antialias: false,
-  //     alpha: false
-  //   });
-  //   debugRenderer.setClearColor(0xff000000, 0);
-  //   debugRenderer.setPixelRatio(window.devicePixelRatio || 1);
-  //   debugRenderer.setSize(this.simSize, this.simSize);
-  //   debugEl.appendChild(this.debugRenderer.domElement);
-  // }
 }
 
 var mountainMaterial;
@@ -521,6 +508,9 @@ class ParticleBuilder {
         uSurfaceColor: {
           value: new THREE.Color(this.debugObject.surfaceColor)
         },
+        stepper: {
+          value: 1.0
+        }
       },
       vertexShader: this.vertexShader,
       fragmentShader: this.fragmentShader,
@@ -556,6 +546,7 @@ class ParticleBuilder {
     gui.add(this.particleMaterial.uniforms.xScale, 'value').min(0).max(3).step(0.01).name('xScale');
     gui.add(this.particleMaterial.uniforms.yScale, 'value').min(0).max(3).step(0.01).name('yScale');
     gui.add(this.particleMaterial.uniforms.zScale, 'value').min(0).max(3).step(0.01).name('zScale');
+    gui.add(this.particleMaterial.uniforms.stepper, 'value').min(-1).max(500).step(0.1).name('stepper');
     gui.addColor(this.debugObject, 'depthColor').name('depthColor').onChange(() => {
       this.particleMaterial.uniforms.uDepthColor.value.set(this.debugObject.depthColor)
     });
