@@ -40,8 +40,8 @@ void main() {
   //  (-0.5 + mapPosition.z) * 0.2);
 
 
-  vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
-  // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
+  // vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
+  vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
 
   // wrap offsets with a fade
@@ -75,14 +75,14 @@ void main() {
 
   // for with translate
 
-  if (dist>stepper)
+  if (dist>1.0)
   {
     // scale=map(dist,200.0,100.0,scale,0.0);
-    // scale=0.0;
-    // if(scale <0.0)
-    // {
-    //   scale=0.0;
-    // }
+    scale=0.0;
+    if(scale <0.0)
+    {
+      scale=0.0;
+    }
   }
 
   // set final vert position
@@ -92,5 +92,5 @@ void main() {
   vUv = uv;
   // vColorUV = colorUV;
   // vScale = scale;
-  vElevation = mapPosition.z;
+  vElevation = mapPosition.y;
 }
