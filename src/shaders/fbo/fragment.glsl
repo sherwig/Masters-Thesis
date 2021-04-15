@@ -72,7 +72,7 @@ void main() {
 
 
   finalColor.rg = lastFrame.rg;
-  finalColor.rg += vec2(randomizer);
+  // finalColor.rg += vec2(randomizer);
 
 
   // finalColor.rg = vec2(angleOffset);
