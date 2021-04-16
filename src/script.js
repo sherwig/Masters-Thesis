@@ -404,11 +404,11 @@ function buildMountainBuffer() {
       },
       xFreq: {
         type: "f",
-        value: 3.0
+        value: 5.0
       },
       yFreq: {
         type: "f",
-        value: 3.0
+        value: 5.0
       },
       noiseSpeed: {
         type: "f",
@@ -431,13 +431,13 @@ function buildMountainBuffer() {
   gui.add(mountainMaterial.uniforms.xFreq, 'value').min(0).max(10).step(0.1).name('xFreq');
   gui.add(mountainMaterial.uniforms.yFreq, 'value').min(0).max(10).step(0.1).name('yFreq');
   gui.add(mountainMaterial.uniforms.noiseSpeed, 'value').min(0).max(30).step(0.1).name('noiseSpeed');
-  gui.add(mountainMaterial.uniforms.elevation, 'value').min(0).max(0.9).step(0.01).name('elevation');
+  gui.add(mountainMaterial.uniforms.elevation, 'value').min(0).max(3.0).step(0.01).name('elevation');
 
 }
 
 
 class ParticleBuilder {
-  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject, positionX, positionY, positionZ) {
+  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject, positionX, positionY, positionZ, meshRadius, meshDepth) {
     this.width = width;
     this.height = height;
     this.simSize = simSize;
@@ -447,6 +447,8 @@ class ParticleBuilder {
     this.positionX = positionX;
     this.positionY = positionY;
     this.positionZ = positionZ;
+    this.meshRadius = meshRadius;
+    this.meshDepth = meshDepth;
     this.buildParticles();
     this.buildGui();
   }
@@ -458,8 +460,8 @@ class ParticleBuilder {
     this.geometry.attributes = this.buffGeom.attributes;
 
     var particleCount = this.width * this.height;
-    var meshRadius = 200;
-    var meshDepth = 400;
+    // this.meshRadius = 200;
+    // this.meshDepth = 400;
 
     this.translateArray = new Float32Array(particleCount * 3);
     this.colorUVArray = new Float32Array(particleCount * 2);
@@ -520,7 +522,7 @@ class ParticleBuilder {
     });
 
     this.mesh = new THREE.Mesh(this.geometry, this.particleMaterial);
-    this.mesh.scale.set(meshRadius, meshRadius, meshDepth);
+    this.mesh.scale.set(this.meshRadius, this.meshRadius, this.meshDepth);
     this.mesh.position.set(this.positionX, this.positionY, this.positionZ);
     // mesh.rotatation.x = Math.PI;
     this.mesh.rotation.x = Math.PI / 2;
@@ -558,116 +560,6 @@ class ParticleBuilder {
 
 }
 
-// pseudo code for VORTEX
-//Build the particles with UV and positions
-//Add randomness around the plane in x and y do cirlce in Vertex Render Shader
-
-
-// const parameters = {}
-// parameters.count = 200000
-// parameters.size = 0.005
-// parameters.radius = 5
-// parameters.branches = 3
-// parameters.spin = 1
-// parameters.randomness = 0.5
-// parameters.randomnessPower = 3
-// parameters.insideColor = '#ff6030'
-// parameters.outsideColor = '#1b3984'
-//
-// let geometryVortex;
-// let materialVortex;
-// let vortex;
-//
-// function buildVortex() {
-//   geometryVortex = new THREE.PlaneBufferGeometry()
-//
-//   const positions = new Float32Array(parameters.count * 3)
-//   const colors = new Float32Array(parameters.count * 3)
-//   const scales = new Float32Array(parameters.count * 1)
-//   const randomness = new Float32Array(parameters.count * 3)
-//
-//   const insideColor = new THREE.Color(parameters.insideColor)
-//   const outsideColor = new THREE.Color(parameters.outsideColor)
-//
-//   for (let i = 0; i < parameters.count; i++) {
-//     const i3 = i * 3
-//
-//     // Position
-//     const radius = Math.random() * parameters.radius
-//
-//     const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
-//     positions[i3] = Math.cos(branchAngle) * radius
-//     positions[i3 + 1] = 0.0
-//     positions[i3 + 2] = Math.sin(branchAngle) * radius
-//
-//     //randomness
-//     const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
-//     const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
-//     const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
-//     randomness[i3] = randomX
-//     randomness[i3 + 1] = randomY
-//     randomness[i3 + 2] = randomZ
-//
-//
-//     // Color
-//     const mixedColor = insideColor.clone()
-//     mixedColor.lerp(outsideColor, radius / parameters.radius)
-//
-//     colors[i3] = mixedColor.r
-//     colors[i3 + 1] = mixedColor.g
-//     // colors[i3 + 2] = mixedColor.b
-//
-//     //scale
-//     scales[i] = Math.random();
-//   }
-//
-//   // geometryVortex.setAttribute('translate', new THREE.InstancedBufferAttribute(this.translateArray, 3));
-//   // geometryVortex.setAttribute('colorUV', new THREE.InstancedBufferAttribute(this.colorUVArray, 2));
-//
-//   geometryVortex.setAttribute('translate', new THREE.BufferAttribute(positions, 3))
-//   geometryVortex.setAttribute('colorUV', new THREE.BufferAttribute(colors, 2))
-//   geometryVortex.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
-//   geometryVortex.setAttribute('aRandomness', new THREE.BufferAttribute(randomness, 3))
-//
-//
-//
-//   materialVortex = new THREE.ShaderMaterial({
-//     depthWrite: false,
-//     blending: THREE.AdditiveBlending,
-//     vertexColors: true,
-//     vertexShader: renderFragment,
-//     fragmentShader: renderVertex,
-//     uniforms: {
-//       uTime: {
-//         value: 0
-//       },
-//       uSize: {
-//         value: 30 * renderer.getPixelRatio()
-//       },
-//       positionsMap: {
-//         value: null
-//       },
-//       map: {
-//         value: new THREE.TextureLoader().load('textures/circle.png')
-//       },
-//       uDepthColor: {
-//         value: new THREE.Color(parameters.insideColor)
-//       },
-//       uSurfaceColor: {
-//         value: new THREE.Color(parameters.outsideColor)
-//       }
-//     }
-//
-//   })
-//
-//   /**
-//    * Points
-//    */
-//   vortex = new THREE.Points(geometryVortex, materialVortex)
-//   scene.add(vortex)
-//
-// }
-
 
 // const debugObject = {};
 // debugObject.depthColor = '#186691';
@@ -676,13 +568,13 @@ class ParticleBuilder {
 const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, {
   depthColor: '#186691',
   surfaceColor: '#9bd8ff'
-}, 0, 0, 0);
+}, 0, 0, 0, 200, 400);
 
 const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMountainFragment, renderMountainVertex, {
     depthColor: '#26a1f0',
     surfaceColor: '#050822'
   },
-  0, 0, 0);
+  0, 0, 0, 400, 600);
 
 
 const moonDebug = {

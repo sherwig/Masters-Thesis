@@ -28,7 +28,7 @@ void main() {
 
   // get map position from double buffer
   vec4 mapPosition = texture2D(positionsMap, colorUV);
-  vec3 offsetAmp = vec3(xScale, yScale, zScale);
+  vec3 offsetAmp = vec3(4.0, yScale, zScale);
 
   // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
   vec3 posOffset = vec3(
@@ -64,9 +64,19 @@ void main() {
     if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
 
 
-    if (dist<200.0)
+    if (dist<250.0)
     {
-      scale=map(dist,200.0,100.0,scale,0.0);
+      scale=map(dist,250.0,125.0,scale,0.0);
+      // scale=0.0;
+      if(scale <0.0)
+      {
+        scale=0.0;
+      }
+    }
+
+    if (dist>400.0)
+    {
+      scale=map(dist,400.0,420.0,scale,0.0);
       // scale=0.0;
       if(scale <0.0)
       {

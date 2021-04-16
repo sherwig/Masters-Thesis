@@ -95,6 +95,10 @@ float cnoise(vec3 P){
   return 2.2 * n_xyz;
 }
 
+float random (vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);
+}
+
 
 
 void main() {
@@ -110,6 +114,36 @@ void main() {
   vec4 positionsMap = texture2D(positions, vUv);
 
   vec4 finalColor = lastFrame; // override mix with test pattern
+
+
+  // float angle = atan(lastFrame.r,lastFrame.g);
+  float angle = atan(vUvOrig.r*0.2,vUvOrig.g*0.2);
+
+  // Find distance of everypoint from the center NEEDS WORK
+  // float distanceToCenter = length(vUvOrig.rg);
+
+  float distanceToCenter = distance(vUvOrig.rg, vec2(0.5));
+  // float distanceToCenter = distance(lastFrame.rg, vec2(0.0));
+
+  // float distanceToCenter= 0.5;
+
+  // Increase the spin angle based on uTime and the distance from the center Closer to the center means it will go faster
+  float angleOffset = (1.0/distanceToCenter)*uTime;
+  angle+=angleOffset;
+  // angle+=0.0001;
+  lastFrame.r =0.5+0.5*cos(angle)*distanceToCenter;
+  lastFrame.g =0.5+0.5*sin(angle)*distanceToCenter;
+
+  vec2 displacedUV = vUvOrig + cnoise(vec3(vUvOrig.x*.02, vUvOrig.y*.02, uTime*0.1));
+  // lastFrame.rg += displacedUV * 0.1;
+
+  float randomizer = random(vUvOrig);
+  lastFrame.rg += (randomizer * 0.2);
+  finalColor.rg = lastFrame.rg;
+
+
+
+
 
   //VORTEX
   // float angle = atan(positionsMap.x,positionsMap.z);
