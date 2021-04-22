@@ -64,9 +64,9 @@ void main() {
     if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
 
 
-    if (dist<250.0)
+    if (dist<125.0)
     {
-      scale=map(dist,250.0,125.0,scale,0.0);
+      scale=map(dist,125.0,100.0,scale,0.0);
       // scale=0.0;
       if(scale <0.0)
       {
@@ -74,9 +74,9 @@ void main() {
       }
     }
 
-    if (dist>400.0)
+    if (dist>375.0)
     {
-      scale=map(dist,400.0,420.0,scale,0.0);
+      scale=map(dist,375.0,400.0,scale,0.0);
       // scale=0.0;
       if(scale <0.0)
       {

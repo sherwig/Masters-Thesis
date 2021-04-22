@@ -5,8 +5,8 @@ uniform sampler2D lastFrame;
 uniform sampler2D imgTex;
 uniform sampler2D speedTex;
 uniform float uTime;
-uniform float mapDivider;
-uniform float offsetSpeed;
+uniform float twister;
+uniform float waveAdder;
 uniform sampler2D positions;
 
 #define PI 3.1415926538
@@ -128,18 +128,58 @@ void main() {
   // float distanceToCenter= 0.5;
 
   // Increase the spin angle based on uTime and the distance from the center Closer to the center means it will go faster
+
   float angleOffset = (1.0/distanceToCenter)*uTime;
   angle+=angleOffset;
   // angle+=0.0001;
-  lastFrame.r =0.5+0.5*cos(angle)*distanceToCenter;
-  lastFrame.g =0.5+0.5*sin(angle)*distanceToCenter;
 
-  vec2 displacedUV = vUvOrig + cnoise(vec3(vUvOrig.x*.02, vUvOrig.y*.02, uTime*0.1));
+  // lastFrame.r =0.5+0.5*cos(angle)*distanceToCenter;
+  // lastFrame.g =0.5+0.5*sin(angle)*distanceToCenter;
+
+
   // lastFrame.rg += displacedUV * 0.1;
 
   float randomizer = random(vUvOrig);
-  lastFrame.rg += (randomizer * 0.2);
-  finalColor.rg = lastFrame.rg;
+  float randomizer2 = random(vUvOrig * 5.0);
+  // lastFrame.rg += (randomizer * 0.2);
+
+  // finalColor.rg = lastFrame.rg;
+
+
+
+  float radius = distanceToCenter;
+  float spinSpeed = 0.2 + vUvOrig.r * radius;
+  // spinSpeed += randomizer;
+
+  float rads = uTime * spinSpeed + randomizer2 * PI * 2.0;
+  // float twist = radius * (50.0 + 10.0 * sin(uTime*0.2));
+
+  // float twister2 = 10.0 + 8.0*cos(uTime*0.2);
+
+  // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister + twist);
+  float twist = radius * 50.0;
+  float twister2 = 12.0;
+   float polarWaveVal = 0.5 + 0.5 * sin(rads *  twister2+twist);
+
+  // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister2 + twist);
+
+
+  // rads+= polarWaveVal+waveAdder;
+  rads+= polarWaveVal;
+  // rads+= (PI*2.0 *uTime* 0.2) + (vUvOrig.r * radius *0.01);
+
+  lastFrame.r =0.5+0.5*cos(rads)*radius;
+  lastFrame.g =0.5+0.5*sin(rads)*radius;
+
+  // vec2 displacedUV = vUvOrig + cnoise(vec3(vUvOrig.x*1.0, vUvOrig.y*1.0, uTime*0.1));
+  // float strength = 0.8+0.1*cnoise(vec3(displacedUV.x*2.0, displacedUV.y*2.0, uTime*0.2));
+
+  float strength = 0.7-0.2 *sin(vUvOrig.r*0.5+uTime);
+
+  lastFrame.b = strength;
+
+
+  finalColor.rgb = lastFrame.rgb;
 
 
 

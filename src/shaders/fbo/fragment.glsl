@@ -71,8 +71,10 @@ void main() {
 
 
   // finalColor.rg = vec2(angleOffset);
-  finalColor.rg = speedster.rg;
-  finalColor.b = 0.8;
+  // finalColor.rg = speedster.rg;
+  // finalColor.b = 0.8;
+
+  finalColor.rgb = speedster.rgb;
 
 
  //TESTER

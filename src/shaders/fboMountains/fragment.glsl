@@ -72,7 +72,7 @@ void main() {
 
   for (float i=1.0; i<=2.0; i++)
   {
-      vatio+=abs(snoise(vec2(lastFrame.xy*0.2*i*uTime))*0.2/i);
+      vatio+=abs(snoise(vec2(lastFrame.xy*0.02*i*uTime))*0.2/i);
       // vatio+=snoise(vec2(lastFrame.xy*0.2*i*uTime))*0.5/i;
       // vatio= .2+abs(sin(uTime*0.2*i)*4.0/i);
       // elevation*= .4+abs(cos(uTime*0.4*i)*3.0/i);
@@ -82,7 +82,7 @@ void main() {
   // finalColor.b*= elevation + sin(uTime);
 
   // elevation*= 1.0+abs(cos(uTime*0.2)/3.0);
-  finalColor.b = vatio * globalSpeed;
+  finalColor.b = vatio * globalSpeed-0.2;
   finalColor.r =0.5;
   finalColor.g =0.5;
 

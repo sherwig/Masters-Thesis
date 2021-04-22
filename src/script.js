@@ -26,10 +26,6 @@ import noiseImage from '../static/textures/noise.jpg'
 import gradientImage from '../static/textures/gradient.png'
 
 
-
-// import colorImage from '../static/textures/color.jpeg'
-
-
 const gui = new dat.GUI()
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -344,13 +340,13 @@ function bufferBuiltForSpeed() {
         type: "t",
         value: null
       },
-      mapDivider: {
+      twister: {
         type: "f",
-        value: 4.0
+        value: 10.0
       },
-      offsetSpeed: {
+      waveAdder: {
         type: "f",
-        value: 0.8
+        value: 0.2
       }
 
     },
@@ -363,8 +359,8 @@ function bufferBuiltForSpeed() {
   doubleSpeedBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
   doubleSpeedBuffer.displayMesh.position.set(-60, 0, 0);
 
-  gui.add(speedMaterial.uniforms.mapDivider, 'value').min(0).max(10).step(0.1).name('speedDivider');
-  gui.add(speedMaterial.uniforms.offsetSpeed, 'value').min(0).max(3).step(0.01).name('offsetSpeed');
+  gui.add(speedMaterial.uniforms.twister, 'value').min(0).max(40).step(0.1).name('twister');
+  gui.add(speedMaterial.uniforms.waveAdder, 'value').min(0).max(1).step(0.01).name('waveAdder');
 
 }
 
@@ -416,7 +412,7 @@ function buildMountainBuffer() {
       },
       elevation: {
         type: "f",
-        value: 0.8
+        value: 0.2
       }
     },
     fragmentShader: fboMountainFragment
@@ -625,7 +621,7 @@ const scaleArray = new Float32Array(firefliesCount)
 
 for (let i = 0; i < firefliesCount; i++) {
   positionArray[i * 3 + 0] = (Math.random() - 0.5) * 800
-  positionArray[i * 3 + 1] = Math.random() * 150
+  positionArray[i * 3 + 1] = Math.random() * 250
   positionArray[i * 3 + 2] = (Math.random() - 0.5) * 800
 
   scaleArray[i] = Math.random()
@@ -644,7 +640,7 @@ const firefliesMaterial = new THREE.ShaderMaterial({
       value: Math.min(window.devicePixelRatio, 2)
     },
     uSize: {
-      value: 1400
+      value: 2500
     }
   },
   vertexShader: fireflyVertex,
@@ -750,6 +746,9 @@ function updateObjects() {
 
   mountainBuilder.setUniform("uTime", time);
   mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
+
+
+
   // mountainMaterial.uniforms["positions"].value = mountainBuffer.getTexture();
   const cameraAmp = 2;
 }
@@ -771,6 +770,9 @@ const tick = () => {
   firefliesMaterial.uniforms.uTime.value = elapsedTime;
   sphereMaterial.uniforms.uTime.value = elapsedTime;
   // materialVortex.uniforms.uTime.value = elapsedTime;
+
+  // moon.position.x += Math.PI * 2 * Math.cos(time);
+  // moon.position.y += Math.PI * 2 * Math.sin(time);
 
 
   // Update controls
