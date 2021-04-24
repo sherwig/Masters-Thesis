@@ -1,19 +1,45 @@
-*
-{
-    margin: 0;
-    padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
 }
 
 html,
-body
-{
-    overflow: hidden;
+body {
+  overflow: hidden;
 }
 
-.webgl
-{
-    position: fixed;
-    top: 0;
-    left: 0;
-    outline: none;
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+#name {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 2em;
+  position: fixed;
+  top: 90%;
+  right: 10%;
+  /* width: 100%; */
+  text-align: right;
+  z-index: 100;
+  display: block;
+  color: white;
+  text-decoration: none;
+}
+
+.gitHub {
+  height: 100%;
+  /* background-image: url("../static/img/GitHub.png"); */
+  position: fixed;
+  top: 89%;
+  right: 4%;
+  width: 100%;
+  text-align: right;
+  z-index: 100;
+  display: block;
+  color: white;
 }

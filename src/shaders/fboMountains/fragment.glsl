@@ -82,7 +82,7 @@ void main() {
   // finalColor.b*= elevation + sin(uTime);
 
   // elevation*= 1.0+abs(cos(uTime*0.2)/3.0);
-  finalColor.b = vatio * globalSpeed-0.2;
+  finalColor.b = vatio * globalSpeed-0.18;
   finalColor.r =0.5;
   finalColor.g =0.5;
 

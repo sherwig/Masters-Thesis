@@ -150,8 +150,9 @@ void main() {
   float radius = distanceToCenter;
   float spinSpeed = 0.2 + vUvOrig.r * radius;
   // spinSpeed += randomizer;
-
+  float baseRads = uTime * 2.0;
   float rads = uTime * spinSpeed + randomizer2 * PI * 2.0;
+
   // float twist = radius * (50.0 + 10.0 * sin(uTime*0.2));
 
   // float twister2 = 10.0 + 8.0*cos(uTime*0.2);
@@ -159,7 +160,7 @@ void main() {
   // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister + twist);
   float twist = radius * 50.0;
   float twister2 = 12.0;
-   float polarWaveVal = 0.5 + 0.5 * sin(rads *  twister2+twist);
+  float polarWaveVal =  baseRads + 0.5 + 0.5 * sin(rads * twister2 + twist);
 
   // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister2 + twist);
 

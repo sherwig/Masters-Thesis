@@ -41,6 +41,8 @@ const backgroundColor = {
 
 }
 
+//OnWindowLoad Set opactity with a CSS transition on the Body
+
 
 class ThreeDoubleBuffer {
   constructor(width, height, bufferMaterial, isData = false, bgColor = 0xff0000, transparent = false) {
@@ -296,18 +298,6 @@ function buildDoubleBuffer() {
   // gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
 
   gui.add(bufferMaterial.uniforms.divider, 'value').min(0).max(1000).step(1).name('divider');
-
-  // add debug rednerer & add to DOM
-  // if (debugRender) {
-  //   debugRenderer = new THREE.WebGLRenderer({
-  //     antialias: false,
-  //     alpha: false
-  //   });
-  //   debugRenderer.setClearColor(0xff000000, 0);
-  //   debugRenderer.setPixelRatio(window.devicePixelRatio || 1);
-  //   debugRenderer.setSize(this.simSize, this.simSize);
-  //   debugEl.appendChild(this.debugRenderer.domElement);
-  // }
 }
 
 var speedMaterial;
@@ -433,7 +423,7 @@ function buildMountainBuffer() {
 
 
 class ParticleBuilder {
-  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject, positionX, positionY, positionZ, meshRadius, meshDepth) {
+  constructor(width, height, simSize, fragmentShader, vertexShader, debugObject, positionX, positionY, positionZ, meshRadius, meshDepth, rotX, rotY, rotZ) {
     this.width = width;
     this.height = height;
     this.simSize = simSize;
@@ -445,6 +435,9 @@ class ParticleBuilder {
     this.positionZ = positionZ;
     this.meshRadius = meshRadius;
     this.meshDepth = meshDepth;
+    this.rotX = rotX;
+    this.rotY = rotY;
+    this.rotZ = rotZ;
     this.buildParticles();
     this.buildGui();
   }
@@ -521,7 +514,8 @@ class ParticleBuilder {
     this.mesh.scale.set(this.meshRadius, this.meshRadius, this.meshDepth);
     this.mesh.position.set(this.positionX, this.positionY, this.positionZ);
     // mesh.rotatation.x = Math.PI;
-    this.mesh.rotation.x = Math.PI / 2;
+    // this.mesh.rotation.x = Math.PI / 2;
+    this.mesh.rotation.set(this.rotX, this.rotY, this.rotZ);
 
     // this.mesh.castShadow = true;
     scene.add(this.mesh);
@@ -548,7 +542,6 @@ class ParticleBuilder {
     gui.addColor(this.debugObject, 'depthColor').name('depthColor').onChange(() => {
       this.particleMaterial.uniforms.uDepthColor.value.set(this.debugObject.depthColor)
     });
-
     gui.addColor(this.debugObject, 'surfaceColor').name('surfaceColor').onChange(() => {
       this.particleMaterial.uniforms.uSurfaceColor.value.set(this.debugObject.surfaceColor)
     });
@@ -564,13 +557,13 @@ class ParticleBuilder {
 const seaBuilder = new ParticleBuilder(simSize, simSize, simSize, renderFragment, renderVertex, {
   depthColor: '#186691',
   surfaceColor: '#9bd8ff'
-}, 0, 0, 0, 200, 400);
+}, 0, 0, 0, 200, 400, Math.PI / 2, 0, 0);
 
 const mountainBuilder = new ParticleBuilder(simSize, simSize, simSize, renderMountainFragment, renderMountainVertex, {
     depthColor: '#26a1f0',
     surfaceColor: '#050822'
   },
-  0, 0, 0, 400, 600);
+  0, 0, 0, 400, 600, Math.PI / 2, 0, 0);
 
 
 const moonDebug = {
@@ -579,7 +572,7 @@ const moonDebug = {
 }
 
 
-const moonGeometry = new THREE.SphereGeometry(30, 32, 32);
+const moonGeometry = new THREE.SphereGeometry(60, 32, 32);
 // const material = new THREE.MeshBasicMaterial({
 //   color: 0xffff00
 // });
@@ -602,7 +595,7 @@ const moonMaterial = new THREE.ShaderMaterial({
 
 })
 const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-moon.position.set(0, 200, -200);
+moon.position.set(0, 300, -300);
 scene.add(moon);
 
 
@@ -678,7 +671,7 @@ const sphereMaterial = new THREE.ShaderMaterial({
   side: THREE.DoubleSide
   // blending: THREE.NormalBlending,
 });
-
+//
 const backgroundSphere = new THREE.Mesh(spheregeom, sphereMaterial);
 scene.add(backgroundSphere);
 
