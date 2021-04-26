@@ -32,14 +32,6 @@ void main() {
    (-0.5 + mapPosition.z) * offsetAmp.z);
 
 
-
-// CURL
-  // vec3 posOffset = vec3(
-  //  (-0.5 + mapPosition.x) * 2.8,
-  //  (-0.5 + mapPosition.y) * 2.8,
-  //  (-0.5 + mapPosition.z) * 0.2);
-
-
   // vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
   vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 

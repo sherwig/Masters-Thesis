@@ -37,17 +37,9 @@ void main() {
    (-0.5 + mapPosition.z) * offsetAmp.z);
 
 
-   //Attempt at Circle
-   // vec3 posOffset = vec3(circle(colorUv,0.9));
-
-  // vec3 posOffset = vec3(circle(mapPosition.xy,0.9),circle(mapPosition.yz,0.9),circle(mapPosition.za,0.9));
-
   vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
   // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
-
-  // wrap offsets with a fade
-  // use distance from center for mapPosition.x
 
   float scale = fullScale;
   // if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));

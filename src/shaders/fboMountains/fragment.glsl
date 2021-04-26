@@ -65,7 +65,6 @@ void main() {
 
   float noiseVal = abs(snoise(vec2((vUvOrig.x+lastFrame.x)*xFreq,(vUvOrig.y+lastFrame.y)*yFreq)));
 
-  // float vatio = 1.0-(noiseVal*length(vUvOrig)+0.2);
   float vatio = 1.0-(noiseVal*length(lastFrame.xy));
   vatio *= 1.0 + elevation * sin(uTime * noiseSpeed + vUvOrig.x * noiseSpeed + finalColor.x + noiseVal)* cos(uTime * noiseSpeed + vUvOrig.y * noiseSpeed + finalColor.z + noiseVal);
 
@@ -73,19 +72,11 @@ void main() {
   for (float i=1.0; i<=2.0; i++)
   {
       vatio+=abs(snoise(vec2(lastFrame.xy*0.02*i*uTime))*0.2/i);
-      // vatio+=snoise(vec2(lastFrame.xy*0.2*i*uTime))*0.5/i;
-      // vatio= .2+abs(sin(uTime*0.2*i)*4.0/i);
-      // elevation*= .4+abs(cos(uTime*0.4*i)*3.0/i);
   }
-  // finalColor.b *= 1.0+ elevation * sin(uTime * noiseSpeed + vUvOrig.x * noiseSpeed + finalColor.x + noiseVal);
 
-  // finalColor.b*= elevation + sin(uTime);
-
-  // elevation*= 1.0+abs(cos(uTime*0.2)/3.0);
   finalColor.b = vatio * globalSpeed-0.18;
   finalColor.r =0.5;
   finalColor.g =0.5;
-
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;
