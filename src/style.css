@@ -10,6 +10,11 @@ body {
   overflow: hidden;
 }
 
+body {
+  opacity: 1;
+  transition: 2s;
+}
+
 .webgl {
   position: fixed;
   top: 0;

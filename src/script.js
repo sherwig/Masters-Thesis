@@ -33,6 +33,9 @@ const scene = new THREE.Scene()
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
 //OnWindowLoad Set opactity with a CSS transition on the Body
+window.onload = function() {
+  document.getElementById('body').style.opacity = 0;
+}
 
 
 class ThreeDoubleBuffer {
