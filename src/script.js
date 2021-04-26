@@ -22,8 +22,6 @@ import fireflyFragment from './shaders/fireflies/fragment.glsl'
 import fireflyVertex from './shaders/fireflies/vertex.glsl'
 import backgroundFragment from './shaders/background/fragment.glsl'
 import backgroundVertex from './shaders/background/vertex.glsl'
-import noiseImage from '../static/textures/noise.jpg'
-import gradientImage from '../static/textures/gradient.png'
 
 
 const gui = new dat.GUI()
@@ -31,8 +29,6 @@ const gui = new dat.GUI()
 const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
-
-const texture = new THREE.TextureLoader().load('textures/gradient.png');
 
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
@@ -200,17 +196,9 @@ class buildBuffers {
           type: "t",
           value: null
         },
-        imgTex: {
-          type: "t",
-          value: new THREE.TextureLoader().load('textures/noise.jpg')
-        },
         res: {
           type: "v2",
           value: new THREE.Vector2(this.simSize, this.simSize)
-        },
-        speedTex: {
-          type: "t",
-          value: new THREE.TextureLoader().load('textures/noise.jpg')
         },
         uTime: {
           type: "f",
@@ -252,17 +240,9 @@ function buildDoubleBuffer() {
         type: "t",
         value: null
       },
-      imgTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
-      },
       res: {
         type: "v2",
         value: new THREE.Vector2(simSize, simSize)
-      },
-      speedTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
       },
       uTime: {
         type: "f",
@@ -310,17 +290,9 @@ function bufferBuiltForSpeed() {
         type: "t",
         value: null
       },
-      imgTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
-      },
       res: {
         type: "v2",
         value: new THREE.Vector2(simSize, simSize)
-      },
-      speedTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
       },
       uTime: {
         type: "f",
@@ -364,17 +336,9 @@ function buildMountainBuffer() {
         type: "t",
         value: null
       },
-      imgTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
-      },
       res: {
         type: "v2",
         value: new THREE.Vector2(simSize, simSize)
-      },
-      speedTex: {
-        type: "t",
-        value: new THREE.TextureLoader().load('textures/noise.jpg')
       },
       uTime: {
         type: "f",
@@ -471,9 +435,6 @@ class ParticleBuilder {
       uniforms: {
         map: {
           value: new THREE.TextureLoader().load('textures/circle.png')
-        },
-        colorMap: {
-          value: new THREE.TextureLoader().load(gradientImage)
         },
         positionsMap: {
           value: null

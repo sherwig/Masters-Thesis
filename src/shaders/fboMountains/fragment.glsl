@@ -2,8 +2,6 @@ precision highp float;
 
 uniform vec2 res;
 uniform sampler2D lastFrame;
-uniform sampler2D imgTex;
-uniform sampler2D speedTex;
 uniform sampler2D speedMap;
 uniform float uTime;
 uniform float xFreq;
@@ -51,7 +49,7 @@ void main() {
   vec2 texel = 1. / res;
   // get orig color and normanlized numbers
   vec2 vUvOrig = gl_FragCoord.xy / res;
-  vec4 imgColor = texture2D(imgTex, vUvOrig);
+  // vec4 imgColor = texture2D(imgTex, vUvOrig);
   // apply zoom & rotate displacement
   vec2 vUv = gl_FragCoord.xy / res;
 
