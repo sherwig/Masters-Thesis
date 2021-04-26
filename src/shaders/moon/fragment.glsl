@@ -91,23 +91,7 @@ float cnoise(vec3 P)
 
 void main() {
 
-    // vec2 st = gl_FragCoord.xy/vUv.xy;
-
-    // float mixStrength = abs(cnoise(vec3(st.xy*0.2,uTime*4.0))*1.0);
-
-    // float mixStrength = (0.2)*0.5;
-    // vec3 depthColor = vec3(0.7,0.3,1.0);
-    // vec3 surfaceColor = vec3(0.0,0.0,0.0);
-    // vec3 color = mix(surfaceColor, depthColor,mixStrength);
-
     float strength = step(0.9, sin(cnoise(vUv * 0.4+uTime*3.0) * 5.0));
-    // vec3 blackColor = vec3(0.0);
-    // vec3 uvColor = vec3(0.7,0.3,1.0);
-
-
     vec3 mixedColor = mix(uDepthColor, uSurfaceColor, strength);
-
-    // float strength = cnoise(vUv * 0.4);
-
     gl_FragColor = vec4(mixedColor, 1.0);
   }

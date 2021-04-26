@@ -83,21 +83,7 @@ void main() {
   if(finalColor.g < 0.) finalColor.g = 1.;
   if(finalColor.b < 0.) finalColor.b = 1.;
 
-  // if(finalColor.r >= 1.) finalColor.r = 0.5;
-  // if(finalColor.g >= 1.) finalColor.g = 0.5;
-  // if(finalColor.b >= 1.) finalColor.b = 0.5;
-  // if(finalColor.r <= 0.) finalColor.r = .5;
-  // if(finalColor.g <= 0.) finalColor.g = .5;
-  // if(finalColor.b <= 0.) finalColor.b = .5;
-
   float randomizer = random(vUvOrig);
-
-  // if(finalColor.r >= 1.) finalColor.r = randomizer;
-  // if(finalColor.g >= 1.) finalColor.g = randomizer;
-  // if(finalColor.b >= 1.) finalColor.b = randomizer;
-  // if(finalColor.r <= 0.) finalColor.r = randomizer;
-  // if(finalColor.g <= 0.) finalColor.g = randomizer;
-  // if(finalColor.b <= 0.) finalColor.b = randomizer;
 
   // set final color
   gl_FragColor = finalColor;

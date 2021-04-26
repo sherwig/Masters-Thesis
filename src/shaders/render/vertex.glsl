@@ -1,6 +1,4 @@
 precision highp float;
-
-// custom uniforms
 uniform float time;
 uniform sampler2D colorMap;
 uniform sampler2D positionsMap;
@@ -12,8 +10,6 @@ uniform float stepper;
 attribute vec3 translate;
 attribute vec2 colorUV;
 varying vec2 vUv;
-varying float vScale;
-varying vec2 vColorUV;
 varying float vElevation;
 
 float map(float value, float low1, float high1, float low2, float high2){
@@ -82,7 +78,5 @@ void main() {
   gl_Position = projectionMatrix * mvPosition;
    // pass values to frag
   vUv = uv;
-  // vColorUV = colorUV;
-  // vScale = scale;
   vElevation = mapPosition.y;
 }

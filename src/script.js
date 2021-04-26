@@ -32,11 +32,6 @@ const scene = new THREE.Scene()
 
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
-//Background Color
-// const backgroundColor = {
-//
-// }
-
 //OnWindowLoad Set opactity with a CSS transition on the Body
 
 
@@ -478,7 +473,6 @@ class ParticleBuilder {
     // this.mesh.rotation.x = Math.PI / 2;
     this.mesh.rotation.set(this.rotX, this.rotY, this.rotZ);
 
-    // this.mesh.castShadow = true;
     scene.add(this.mesh);
   }
 
@@ -534,9 +528,6 @@ const moonDebug = {
 
 
 const moonGeometry = new THREE.SphereGeometry(60, 32, 32);
-// const material = new THREE.MeshBasicMaterial({
-//   color: 0xffff00
-// });
 const moonMaterial = new THREE.ShaderMaterial({
   uniforms: {
 
@@ -612,12 +603,6 @@ fireflies.position.set(0, 200, 0);
 scene.add(fireflies);
 
 
-// const geometry = new THREE.SphereGeometry(5, 32, 32);
-//
-//
-// const sphere = new THREE.Mesh(geometry, material);
-// scene.add(sphere);
-
 const spheregeom = new THREE.SphereGeometry(3000, 128, 128);
 const sphereMaterial = new THREE.ShaderMaterial({
   uniforms: {
@@ -630,15 +615,11 @@ const sphereMaterial = new THREE.ShaderMaterial({
   // transparent: true,
   blending: THREE.AdditiveBlending,
   side: THREE.DoubleSide
-  // blending: THREE.NormalBlending,
 });
 //
 const backgroundSphere = new THREE.Mesh(spheregeom, sphereMaterial);
 scene.add(backgroundSphere);
 
-
-// z=-300
-// y=50
 
 const sizes = {
   width: window.innerWidth,
@@ -678,16 +659,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// backgroundColor.clearColor = '#12152f';
-//
-// renderer.setClearColor(backgroundColor.clearColor)
-// gui.addColor(backgroundColor, 'clearColor').onChange(() => {
-//   renderer.setClearColor(backgroundColor.clearColor)
-// });
-// renderer.shadowMap.enabled = true;
-// renderer.setClearColor(0xffffff);
-
-
 
 function updateObjects() {
   // update shader
@@ -700,8 +671,6 @@ function updateObjects() {
 
   mountainBuilder.setUniform("uTime", time);
   mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
-
-
 
   // mountainMaterial.uniforms["positions"].value = mountainBuffer.getTexture();
   const cameraAmp = 2;
@@ -725,10 +694,6 @@ const tick = () => {
   sphereMaterial.uniforms.uTime.value = elapsedTime;
   // materialVortex.uniforms.uTime.value = elapsedTime;
 
-  // moon.position.x += Math.PI * 2 * Math.cos(time);
-  // moon.position.y += Math.PI * 2 * Math.sin(time);
-
-
   // Update controls
   controls.update()
 
@@ -746,10 +711,6 @@ const tick = () => {
   mountainBuffer.setUniform('uTime', time);
   mountainBuffer.render(renderer);
 
-
-
-  // sphere.position.x = Math.cos(time * 0.4);
-  // sphere.position.z = Math.sin(time * 0.4);
 
   // updateSimulation();
   // Render

@@ -13,5 +13,4 @@ varying float vElevation;
    // modelPosition.z += sin(rads);
    gl_Position = projectionMatrix * modelPosition;
 
-   // vElevation = elevation;
  }
