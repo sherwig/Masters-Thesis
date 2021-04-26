@@ -1,4 +1,4 @@
-# Three.js Journey
+# Sam Herwigs Master Thesis
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
