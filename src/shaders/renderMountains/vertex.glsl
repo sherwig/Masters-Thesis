@@ -19,11 +19,6 @@ float map(float value, float low1, float high1, float low2, float high2) {
    return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
   }
 
-  float circle(in vec2 _st, in float _radius){
-    vec2 dist = _st-vec2(0.5);
-	  return 1.-smoothstep(_radius-(_radius*0.01), _radius+(_radius*0.01), dot(dist,dist)*4.0);
-}
-
 void main() {
 
   // get map position from double buffer
@@ -51,14 +46,36 @@ void main() {
 
 
 
-    float dist = distance(mvPosition.xy, vec2(0.0));
+
+
     // if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
     // if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
 
+  // float dist = distance(mvPosition.xy, vec2(0.0));
+    // if (dist<110.0)
+    // {
+    //   scale=map(dist,110.0,100.0,scale,0.2);
+    //   // scale=0.0;
+    //   if(scale <0.0)
+    //   {
+    //     scale=0.0;
+    //   }
+    // }
+    //
+    // if (dist>375.0)
+    // {
+    //   scale=map(dist,375.0,400.0,scale,0.0);
+    //   // scale=0.0;
+    //   if(scale <0.0)
+    //   {
+    //     scale=0.0;
+    //   }
+    // }
 
-    if (dist<110.0)
+  float dist = distance(translate.xy, vec2(0.0));
+    if (dist<.35)
     {
-      scale=map(dist,110.0,100.0,scale,0.2);
+      scale=map(dist,0.35,0.23,scale,0.0);
       // scale=0.0;
       if(scale <0.0)
       {
@@ -66,9 +83,9 @@ void main() {
       }
     }
 
-    if (dist>375.0)
+    if (dist>0.8)
     {
-      scale=map(dist,375.0,400.0,scale,0.0);
+      scale=map(dist,0.8,1.0,scale,0.0);
       // scale=0.0;
       if(scale <0.0)
       {

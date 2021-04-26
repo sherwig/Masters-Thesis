@@ -67,7 +67,7 @@ void main() {
   vatio *= 1.0 + elevation * sin(uTime * noiseSpeed + vUvOrig.x * noiseSpeed + finalColor.x + noiseVal)* cos(uTime * noiseSpeed + vUvOrig.y * noiseSpeed + finalColor.z + noiseVal);
 
 
-  for (float i=1.0; i<=2.0; i++)
+  for (float i=1.0; i<=3.0; i++)
   {
       vatio+=abs(snoise(vec2(lastFrame.xy*0.02*i*uTime))*0.2/i);
   }

@@ -29,8 +29,8 @@ void main() {
   vec4 speedster = texture2D(speedMap, vUv);
 
 
-  finalColor.rg = speedster.rg;
-  finalColor.b = 0.8;
+  finalColor.rgb = speedster.rgb;
+  // finalColor.b = 0.8;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

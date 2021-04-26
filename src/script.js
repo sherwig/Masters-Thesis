@@ -33,9 +33,9 @@ const scene = new THREE.Scene()
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
 //Background Color
-const backgroundColor = {
-
-}
+// const backgroundColor = {
+//
+// }
 
 //OnWindowLoad Set opactity with a CSS transition on the Body
 
@@ -225,8 +225,8 @@ class buildBuffers {
     });
     this.doubleBuffer = new ThreeDoubleBuffer(this.simSize, this.simSize, this.bufferMaterial, true);
 
-    this.scene.add(this.doubleBuffer.displayMesh);
-    this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+    // this.scene.add(this.doubleBuffer.displayMesh);
+    // this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
   }
 }
 //
@@ -270,9 +270,9 @@ function buildDoubleBuffer() {
   doubleBuffer = new ThreeDoubleBuffer(simSize, simSize, bufferMaterial, true);
 
   // add double buffer plane to main THREE scene
-  scene.add(doubleBuffer.displayMesh);
-  doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
-  doubleBuffer.displayMesh.position.set(60, 0, 0);
+  // scene.add(doubleBuffer.displayMesh);
+  // doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  // doubleBuffer.displayMesh.position.set(60, 0, 0);
 
   gui.add(bufferMaterial.uniforms.globalSpeed, 'value').min(0).max(2).step(0.0001).name('globalSpeed');
   // gui.add(bufferMaterial.uniforms.rotAmp, 'value').min(0).max(30).step(0.1).name('rotAmp');
@@ -317,9 +317,9 @@ function bufferBuiltForSpeed() {
   doubleSpeedBuffer = new ThreeDoubleBuffer(simSize, simSize, speedMaterial, true);
 
   // add double buffer plane to main THREE scene
-  scene.add(doubleSpeedBuffer.displayMesh);
-  doubleSpeedBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
-  doubleSpeedBuffer.displayMesh.position.set(-60, 0, 0);
+  // scene.add(doubleSpeedBuffer.displayMesh);
+  // doubleSpeedBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  // doubleSpeedBuffer.displayMesh.position.set(-60, 0, 0);
 
   gui.add(speedMaterial.uniforms.twister, 'value').min(0).max(40).step(0.1).name('twister');
   gui.add(speedMaterial.uniforms.waveAdder, 'value').min(0).max(1).step(0.01).name('waveAdder');
@@ -374,8 +374,8 @@ function buildMountainBuffer() {
   mountainBuffer = new ThreeDoubleBuffer(simSize, simSize, mountainMaterial, true);
 
   // add double buffer plane to main THREE scene
-  scene.add(mountainBuffer.displayMesh);
-  mountainBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
+  // scene.add(mountainBuffer.displayMesh);
+  // mountainBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
 
   gui.add(mountainMaterial.uniforms.globalSpeed, 'value').min(0).max(1).step(0.00001).name('globalSpeed');
   gui.add(mountainMaterial.uniforms.xFreq, 'value').min(0).max(10).step(0.1).name('xFreq');

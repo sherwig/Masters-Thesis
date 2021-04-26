@@ -141,7 +141,8 @@ void main() {
   lastFrame.r =0.5+0.5*cos(rads)*radius;
   lastFrame.g =0.5+0.5*sin(rads)*radius;
 
-  float strength = 0.7-0.2 *sin(vUvOrig.r*0.5+uTime);
+  float strength = 0.75-0.15 *sin(vUvOrig.r*0.5+uTime);
+
 
   lastFrame.b = strength;
 
