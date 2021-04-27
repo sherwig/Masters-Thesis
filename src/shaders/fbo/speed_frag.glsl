@@ -41,26 +41,18 @@ void main() {
   float baseRads = uTime * 2.0;
   float rads = uTime * spinSpeed + randomizer2 * PI * 2.0;
 
-  // float twist = radius * (50.0 + 10.0 * sin(uTime*0.2));
-  // float twister2 = 10.0 + 8.0*cos(uTime*0.2);
-  // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister + twist);
   float twist = radius * 50.0;
   float twister2 = 12.0;
   float polarWaveVal =  baseRads + 0.5 + 0.5 * sin(rads * twister2 + twist);
 
-  // float polarWaveVal = 0.5 + 0.5 * sin(rads * twister2 + twist);
-  // rads+= polarWaveVal+waveAdder;
   rads+= polarWaveVal;
-  // rads+= (PI*2.0 *uTime* 0.2) + (vUvOrig.r * radius *0.01);
 
   lastFrame.r =0.5+0.5*cos(rads)*radius;
   lastFrame.g =0.5+0.5*sin(rads)*radius;
 
   float strength = 0.75-0.15 *sin(vUvOrig.r*0.5+uTime);
 
-
   lastFrame.b = strength;
-
 
   finalColor.rgb = lastFrame.rgb;
 
@@ -70,8 +62,6 @@ void main() {
   if(finalColor.r < 0.) finalColor.r = 1.;
   if(finalColor.g < 0.) finalColor.g = 1.;
   if(finalColor.b < 0.) finalColor.b = 1.;
-  // set final color
-
 
   gl_FragColor = finalColor;
 }

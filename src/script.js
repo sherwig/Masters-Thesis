@@ -24,18 +24,26 @@ import backgroundFragment from './shaders/background/fragment.glsl'
 import backgroundVertex from './shaders/background/vertex.glsl'
 
 
-const gui = new dat.GUI()
+const gui = new dat.GUI();
+dat.GUI.toggleHide();
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector('canvas.webgl');
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
 
 var doubleBuffer, doubleSpeedBuffer, mountainBuffer;
 
-//OnWindowLoad Set opactity with a CSS transition on the Body
+var bodyGetter = document.getElementsByTagName('body')[0];
+
 window.onload = function() {
-  document.getElementById('body').style.opacity = 0;
+  bodyGetter.style.opacity = 1;
 }
+
+var htmlControls = document.getElementById('controls');
+
+setTimeout(function() {
+  htmlControls.style.display = 'none';
+}, 5000);
 
 
 class ThreeDoubleBuffer {
@@ -148,8 +156,6 @@ class ThreeDoubleBuffer {
     renderer.render(this.bufferScene, this.bufferCamera);
     renderer.setRenderTarget(null);
 
-    // render in time if we pass one in
-    // this isn't working...
     if (debugRenderer) {
       debugRenderer.render(this.bufferScene, this.bufferCamera);
     }
@@ -173,14 +179,11 @@ function init() {
   buildDoubleBuffer();
   bufferBuiltForSpeed();
   buildMountainBuffer();
-  // buildVortex();
-  // addShadow();
 
 }
 
 class buildBuffers {
   constructor(fragmentShader, simSize) {
-    // this.doubleBuffer = doubleBuffer;
     this.simSize = simSize;
     this.fragmentShader = fragmentShader;
     this.buildBuffers();
@@ -530,7 +533,7 @@ const moonDebug = {
 }
 
 
-const moonGeometry = new THREE.SphereGeometry(60, 32, 32);
+const moonGeometry = new THREE.SphereGeometry(40, 32, 32);
 const moonMaterial = new THREE.ShaderMaterial({
   uniforms: {
 
@@ -550,7 +553,7 @@ const moonMaterial = new THREE.ShaderMaterial({
 
 })
 const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-moon.position.set(0, 300, -300);
+moon.position.set(0, 200, -200);
 scene.add(moon);
 
 
@@ -615,7 +618,6 @@ const sphereMaterial = new THREE.ShaderMaterial({
   },
   fragmentShader: backgroundFragment,
   vertexShader: backgroundVertex,
-  // transparent: true,
   blending: THREE.AdditiveBlending,
   side: THREE.DoubleSide
 });
@@ -631,27 +633,31 @@ const sizes = {
 
 window.addEventListener('resize', () => {
   // Update sizes
-  sizes.width = window.innerWidth
-  sizes.height = window.innerHeight
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
 
   // Update camera
-  camera.aspect = sizes.width / sizes.height
-  camera.updateProjectionMatrix()
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
 
   // Update renderer
-  renderer.setSize(sizes.width, sizes.height)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 })
 
 
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000);
 scene.add(camera);
-camera.position.set(0, 0, 400);
+camera.position.set(300, 300, 400);
 // camera.lookAt(scene.position);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+controls.maxDistance = 800.0;
+controls.minDistance = 100.0;
+controls.enablePan = false;
+controls.maxPolarAngle = Math.PI / 2.5;
 
 /**
  * Renderer
@@ -668,14 +674,12 @@ function updateObjects() {
   const time = performance.now() * 0.0001;
   seaBuilder.setUniform("uTime", time);
   seaBuilder.setUniform("positionsMap", doubleBuffer.getTexture());
-  // materialVortex.uniforms["positionsMap"].value = doubleBuffer.getTexture();
 
   speedMaterial.uniforms["positions"].value = doubleBuffer.getTexture();
 
   mountainBuilder.setUniform("uTime", time);
   mountainBuilder.setUniform("positionsMap", mountainBuffer.getTexture());
 
-  // mountainMaterial.uniforms["positions"].value = mountainBuffer.getTexture();
   const cameraAmp = 2;
 }
 
@@ -715,12 +719,11 @@ const tick = () => {
   mountainBuffer.render(renderer);
 
 
-  // updateSimulation();
   // Render
-  renderer.render(scene, camera)
+  renderer.render(scene, camera);
 
   // Call tick again on the next frame
-  window.requestAnimationFrame(tick)
+  window.requestAnimationFrame(tick);
 }
 
 init();

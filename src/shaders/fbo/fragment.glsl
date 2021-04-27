@@ -1,5 +1,4 @@
 precision highp float;
-
 uniform vec2 res;
 uniform sampler2D lastFrame;
 uniform sampler2D speedMap;
@@ -30,7 +29,6 @@ void main() {
 
 
   finalColor.rgb = speedster.rgb;
-  // finalColor.b = 0.8;
 
   if(finalColor.r > 1.) finalColor.r = 0.;
   if(finalColor.g > 1.) finalColor.g = 0.;

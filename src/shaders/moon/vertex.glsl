@@ -7,10 +7,6 @@ varying float vElevation;
    vUv = position;
 
    vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
-   //Attempt at Rotation
-   // float rads = uTime * PI * 2.0;
-   // modelPosition.x += cos(rads);
-   // modelPosition.z += sin(rads);
    gl_Position = projectionMatrix * modelPosition;
 
  }

@@ -25,7 +25,6 @@ void main() {
   vec4 mapPosition = texture2D(positionsMap, colorUV);
   vec3 offsetAmp = vec3(4.0, yScale, zScale);
 
-  // vec3 offsetAmp = vec3(xScale, yScale, 0.4+(sin(0.2*time*0.2)));
   vec3 posOffset = vec3(
    (-0.5 + mapPosition.x) * offsetAmp.x,
    (-0.5 + mapPosition.y) * offsetAmp.y,
@@ -35,42 +34,7 @@ void main() {
   vec4 mvPosition = modelViewMatrix * vec4( translate + posOffset, 1.0 );
   // vec4 mvPosition = modelViewMatrix * vec4( posOffset, 1.0 );
 
-
   float scale = fullScale;
-  // if(mapPosition.x > 0.8) scale = min(scale, map(mapPosition.x, 0.8, 1., scale, 0.));
-  // if(mapPosition.x < 0.2) scale = min(scale, map(mapPosition.x, 0.2, 0., scale, 0.));
-  // if(mapPosition.y > 0.8) scale = min(scale, map(mapPosition.y, 0.8, 1., scale, 0.));
-  // if(mapPosition.y < 0.2) scale = min(scale, map(mapPosition.y, 0.2, 0., scale, 0.));
-  // if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
-  // if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
-
-
-
-
-
-    // if(mapPosition.z > 0.8) scale = min(scale, map(mapPosition.z, 0.8, 1., scale, 0.));
-    // if(mapPosition.z < 0.2) scale = min(scale, map(mapPosition.z, 0.2, 0., scale, 0.));
-
-  // float dist = distance(mvPosition.xy, vec2(0.0));
-    // if (dist<110.0)
-    // {
-    //   scale=map(dist,110.0,100.0,scale,0.2);
-    //   // scale=0.0;
-    //   if(scale <0.0)
-    //   {
-    //     scale=0.0;
-    //   }
-    // }
-    //
-    // if (dist>375.0)
-    // {
-    //   scale=map(dist,375.0,400.0,scale,0.0);
-    //   // scale=0.0;
-    //   if(scale <0.0)
-    //   {
-    //     scale=0.0;
-    //   }
-    // }
 
   float dist = distance(translate.xy, vec2(0.0));
     if (dist<.35)
@@ -86,7 +50,6 @@ void main() {
     if (dist>0.8)
     {
       scale=map(dist,0.8,1.0,scale,0.0);
-      // scale=0.0;
       if(scale <0.0)
       {
         scale=0.0;
