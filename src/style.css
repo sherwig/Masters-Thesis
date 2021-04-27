@@ -69,3 +69,17 @@ body {
   z-index: 100;
   color: white;
 }
+
+#startButton {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 0.8em;
+  position: fixed;
+  top: 4%;
+  width: 6%;
+  height: 5%;
+  right: 4%;
+  text-align: center;
+  z-index: 100;
+  color: white;
+  background-color: black;
+}

@@ -649,7 +649,57 @@ window.addEventListener('resize', () => {
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 20000);
 scene.add(camera);
 camera.position.set(300, 300, 400);
-// camera.lookAt(scene.position);
+
+const listener = new THREE.AudioListener();
+camera.add(listener);
+
+// create a global audio source
+const sound = new THREE.Audio(listener);
+
+// load a sound and set it as the Audio object's buffer
+const audioLoader = new THREE.AudioLoader();
+var clickcounter = 0;
+
+var startButton = document.getElementById('startButton');
+
+// startButton.addEventListener('click', function() {
+//     clickcounter += 1;
+//     if (clickcounter % 2 === 1) {
+//       audioLoader.load('sounds/pad.wav', function(buffer) {
+//         sound.setBuffer(buffer);
+//         sound.setLoop(true);
+//         sound.setVolume(0.5);
+//         sound.play();
+//       });
+//     }, false);
+//
+//
+//   else if (clickcounter % 2 === 0) {
+//     sound.pause();
+//     clickCounter += 1;
+//   }
+// }
+
+startButton.addEventListener('click', function() {
+  clickcounter += 1;
+  if (clickcounter % 2 === 1) {
+    audioLoader.load('sounds/pad.wav', function(buffer) {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.5);
+      sound.play();
+    });
+  } else if (clickcounter % 2 === 0) {
+    sound.pause();
+  }
+}, false);
+
+
+
+
+// audioLoader.setLoop = true;
+// console.log(audioLoader);
+
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
@@ -702,7 +752,7 @@ const tick = () => {
   // materialVortex.uniforms.uTime.value = elapsedTime;
 
   // Update controls
-  controls.update()
+  controls.update();
 
   updateObjects();
 
