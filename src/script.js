@@ -662,24 +662,6 @@ var clickcounter = 0;
 
 var startButton = document.getElementById('startButton');
 
-// startButton.addEventListener('click', function() {
-//     clickcounter += 1;
-//     if (clickcounter % 2 === 1) {
-//       audioLoader.load('sounds/pad.wav', function(buffer) {
-//         sound.setBuffer(buffer);
-//         sound.setLoop(true);
-//         sound.setVolume(0.5);
-//         sound.play();
-//       });
-//     }, false);
-//
-//
-//   else if (clickcounter % 2 === 0) {
-//     sound.pause();
-//     clickCounter += 1;
-//   }
-// }
-
 startButton.addEventListener('click', function() {
   clickcounter += 1;
   if (clickcounter % 2 === 1) {
@@ -693,12 +675,6 @@ startButton.addEventListener('click', function() {
     sound.pause();
   }
 }, false);
-
-
-
-
-// audioLoader.setLoop = true;
-// console.log(audioLoader);
 
 
 // Controls
