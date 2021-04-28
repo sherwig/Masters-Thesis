@@ -1,19 +1,5 @@
 # Sam Herwigs Master Thesis
 
-## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
-
-``` bash
-# Install dependencies (only the first time)
-npm install
-
-# Run the local server at localhost:8080
-npm run dev
-
-# Build for production in the dist/ directory
-npm run build
-```
 
 ## Purpose 
 I created .calm to push my creative coding and design abilities. 
@@ -29,3 +15,19 @@ Follow the setup to run it yourself.
 [Three.js Journey](https://threejs-journey.xyz/) 
 [Lewis Lepton Shader Series](https://www.youtube.com/playlist?list=PL4neAtv21WOmIrTrkNO3xCyrxg4LKkrF7) 
 [FBO Particles](http://barradeau.com/blog/?p=621)
+
+
+## Setup
+Download [Node.js](https://nodejs.org/en/download/).
+Run this followed commands:
+
+``` bash
+# Install dependencies (only the first time)
+npm install
+
+# Run the local server at localhost:8080
+npm run dev
+
+# Build for production in the dist/ directory
+npm run build
+```
