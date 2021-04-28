@@ -3,7 +3,7 @@
 
 ## Purpose 
 I created .calm to push my creative coding and design abilities. 
-I wanted to create a particle system in THREE.js that was genreative but also calming. This challenged my design abilities.
+I wanted to create a particle system in THREE.js that was generative but also calming. This challenged my design abilities.
 Through this project I learned GLSL and several higher end creative coding concepts with a plus being it is very calming. 
 
 ## The Tech 
