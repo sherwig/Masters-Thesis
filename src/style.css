@@ -24,7 +24,6 @@ body {
 
 .thesis {
   font-family: 'Bebas Neue', cursive;
-  font-size: 2em;
   position: fixed;
   top: 89%;
   left: 3%;
@@ -39,7 +38,7 @@ body {
   height: 100%;
   position: fixed;
   top: 89%;
-  right: 4%;
+  right: 3%;
   width: 100%;
   text-align: right;
   z-index: 100;
@@ -53,7 +52,7 @@ body {
   height: auto;
   position: fixed;
   top: 86%;
-  right: -6%;
+  right: -5%;
   text-align: right;
   z-index: 100;
   display: block;
@@ -82,4 +81,61 @@ body {
   z-index: 100;
   color: white;
   background-color: black;
+}
+
+@media only screen and (max-width: 800px) {
+  .gitHub {
+    transform: scale(0.9, 0.9);
+    height: 100%;
+    /* position: fixed; */
+    top: 83%;
+    right: -2%;
+    width: 100%;
+    text-align: right;
+    z-index: 100;
+    display: block;
+    color: white;
+    bottom: 6%;
+  }
+
+  .vimeo {
+    transform: scale(0.5, 0.5);
+    width: 100%;
+    height: auto;
+    /* position: fixed; */
+    top: 85%;
+    right: -4%;
+    text-align: right;
+    z-index: 100;
+    display: block;
+    color: white;
+    bottom: 3%;
+  }
+
+  #startButton {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.6em;
+    position: fixed;
+    top: 4%;
+    width: 15%;
+    height: 5%;
+    right: 4%;
+    text-align: center;
+    z-index: 100;
+    color: white;
+    background-color: black;
+  }
+
+  .thesis {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2em;
+    position: fixed;
+    top: 89%;
+    left: 3%;
+    z-index: 100;
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 0.8em;
+  }
 }

@@ -26,6 +26,7 @@ import backgroundVertex from './shaders/background/vertex.glsl'
 
 const gui = new dat.GUI();
 dat.GUI.toggleHide();
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
 // Scene
