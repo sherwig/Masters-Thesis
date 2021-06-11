@@ -1,11 +1,8 @@
 import './style.css'
-// import './fbo.js'
-// import * as FBO from './fbo.js';
 import * as THREE from 'three'
 import {
   OrbitControls
 } from 'three/examples/jsm/controls/OrbitControls.js'
-// import ThreeDoubleBuffer from 'fbo.js'
 import * as dat from 'dat.gui'
 import fboFragment from './shaders/fbo/fragment.glsl'
 import fboVertex from './shaders/fbo/vertex.glsl'
@@ -231,8 +228,6 @@ class buildBuffers {
     // this.doubleBuffer.displayMesh.scale.set(0.2, 0.2, 0.2);
   }
 }
-//
-// var buffer1 = new buildBuffers(fboFragment, simSize)
 
 function buildDoubleBuffer() {
   var offset = new THREE.Vector2(0, 0);
